@@ -1,0 +1,23 @@
+{
+    "name": "inilim/di",
+    "description": "di",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Inilim\\DI\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "inilim"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.2"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "@stable"
+    }
+}
