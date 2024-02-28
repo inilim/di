@@ -15,49 +15,49 @@ class DI
 
     /**
      * @template T of object
-     * @param class-string<T> $class_name
+     * @param class-string<T> $class_str
      * @return T
      */
-    public static function getInstance(string $class_name, ...$args): object
+    public static function getInstance(string $class_str, ...$args): object
     {
         if ($args) {
-            self::$singleton[$class_name] ??= self::make($class_name, ...$args);
-            return self::$singleton[$class_name];
+            self::$singleton[$class_str] ??= self::make($class_str, ...$args);
+            return self::$singleton[$class_str];
         }
 
         // ------------------------------------------------------------------
         // ___
         // ------------------------------------------------------------------
 
-        self::$singleton[$class_name] ??= self::make($class_name);
-        return self::$singleton[$class_name];
+        self::$singleton[$class_str] ??= self::make($class_str);
+        return self::$singleton[$class_str];
     }
 
     /**
      * @template T of object
-     * @param class-string<T> $class_name
+     * @param class-string<T> $class_str
      * @return T
      */
-    public static function make(string $class_name, ...$args): object
+    public static function make(string $class_str, ...$args): object
     {
-        $name_or_obj = self::swap($class_name);
-        if (\is_string($name_or_obj)) {
-            if ($args) return new $name_or_obj(...$args);
-            return new $name_or_obj;
+        $class_or_obj = self::swap($class_str);
+        if (\is_string($class_or_obj)) {
+            if ($args) return new $class_or_obj(...$args);
+            return new $class_or_obj;
         }
-        return $name_or_obj;
+        return $class_or_obj;
     }
 
 
 
     /**
-     * @param class-string $class_name что менем
+     * @param class-string $class_str что менем
      * @param class-string|object $class_swap на что меняем
      */
-    public static function setDepsSwap(string $class_name, string|object $class_swap): void
+    public static function addSwap(string $class_str, string|object $class_swap): void
     {
         self::$classes_swap ??= [];
-        self::$classes_swap[$class_name] = $class_swap;
+        self::$classes_swap[$class_str] = $class_swap;
     }
 
     // ------------------------------------------------------------------
@@ -65,11 +65,11 @@ class DI
     // ------------------------------------------------------------------
 
     /**
-     * @param class-string $class_name
+     * @param class-string $class_str
      * @return class-string|object
      */
-    protected static function swap(string $class_name): string|object
+    protected static function swap(string $class_str): string|object
     {
-        return self::$classes_swap[$class_name] ?? $class_name;
+        return self::$classes_swap[$class_str] ?? $class_str;
     }
 }
