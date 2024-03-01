@@ -20,7 +20,7 @@ class DI
      */
     public static function getInstance(string $class_str, ...$args): object
     {
-        if ($args) {
+        if (self::$classes_swap === null) {
             self::$singleton[$class_str] ??= self::make($class_str, ...$args);
             return self::$singleton[$class_str];
         }
@@ -29,8 +29,12 @@ class DI
         // ___
         // ------------------------------------------------------------------
 
-        self::$singleton[$class_str] ??= self::make($class_str);
-        return self::$singleton[$class_str];
+        $instance = self::$singleton[$class_str] ?? null;
+        $t = self::make($class_str, ...$args);
+        if (isset($instance)) {
+            if ($instance instanceof $t) return $instance;
+        }
+        return self::$singleton[$class_str] = $t;
     }
 
     /**
@@ -40,6 +44,15 @@ class DI
      */
     public static function make(string $class_str, ...$args): object
     {
+        if (self::$classes_swap === null) {
+            if ($args) return new $class_str(...$args);
+            return new $class_str;
+        }
+
+        // ------------------------------------------------------------------
+        // ___
+        // ------------------------------------------------------------------
+
         $class_or_obj = self::swap($class_str);
         if (\is_string($class_or_obj)) {
             if ($args) return new $class_or_obj(...$args);
