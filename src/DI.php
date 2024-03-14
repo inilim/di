@@ -9,9 +9,14 @@ class DI
      */
     protected static ?array $classes_swap = null;
     /**
-     * @var array<class-string,object>
+     * @var array<string,object>
      */
     protected static array $singleton = [];
+
+    public static function hasInstance(string $class_str): bool
+    {
+        return isset(self::$singleton[\md5($class_str)]);
+    }
 
     /**
      * @template T of object
@@ -20,21 +25,22 @@ class DI
      */
     public static function getInstance(string $class_str, ...$args): object
     {
+        $hash = \md5($class_str);
         if (self::$classes_swap === null) {
-            self::$singleton[$class_str] ??= self::make($class_str, ...$args);
-            return self::$singleton[$class_str];
+            self::$singleton[$hash] ??= self::make($class_str, ...$args);
+            return self::$singleton[$hash];
         }
 
         // ------------------------------------------------------------------
         // ___
         // ------------------------------------------------------------------
 
-        $instance = self::$singleton[$class_str] ?? null;
+        $instance = self::$singleton[$hash] ?? null;
         $t = self::make($class_str, ...$args);
-        if (isset($instance)) {
+        if ($instance !== null) {
             if ($instance instanceof $t) return $instance;
         }
-        return self::$singleton[$class_str] = $t;
+        return self::$singleton[$hash] = $t;
     }
 
     /**
@@ -69,8 +75,9 @@ class DI
      */
     public static function addSwap(string $class_str, string|object $class_swap): void
     {
+        $hash = \md5($class_str);
         self::$classes_swap ??= [];
-        self::$classes_swap[$class_str] = $class_swap;
+        self::$classes_swap[$hash] = $class_swap;
     }
 
     // ------------------------------------------------------------------
@@ -83,6 +90,7 @@ class DI
      */
     protected static function swap(string $class_str): string|object
     {
-        return self::$classes_swap[$class_str] ?? $class_str;
+        $hash = \md5($class_str);
+        return self::$classes_swap[$hash] ?? $class_str;
     }
 }
