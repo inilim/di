@@ -15,7 +15,12 @@ class DI
 
     public static function hasInstance(string $class_str): bool
     {
-        return isset(self::$singleton[\md5($class_str)]);
+        $hash = \md5($class_str);
+        if (self::$classes_swap === null) {
+            return isset(self::$singleton[$hash]);
+        }
+
+        return isset(self::$classes_swap[$hash]);
     }
 
     /**
