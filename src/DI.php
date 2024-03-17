@@ -12,6 +12,10 @@ class DI
      * @var array<string,object>
      */
     protected static array $singleton = [];
+    /**
+     * @var null|array
+     */
+    protected static ?array $register  = null;
 
     public static function hasInstance(string $class_str): bool
     {
@@ -26,9 +30,10 @@ class DI
     /**
      * @template T of object
      * @param class-string<T> $class_str
+     * @param mixed[]|array{} $args
      * @return T
      */
-    public static function getInstance(string $class_str, ...$args): object
+    public static function getInstance(string $class_str, ...$args)
     {
         $hash = \md5($class_str);
         if (self::$classes_swap === null) {
@@ -51,9 +56,10 @@ class DI
     /**
      * @template T of object
      * @param class-string<T> $class_str
+     * @param mixed[]|array{} $args
      * @return T
      */
-    public static function make(string $class_str, ...$args): object
+    public static function make(string $class_str, ...$args)
     {
         if (self::$classes_swap === null) {
             if ($args) return new $class_str(...$args);
@@ -72,8 +78,6 @@ class DI
         return $class_or_obj;
     }
 
-
-
     /**
      * @param class-string $class_str что менем
      * @param class-string|object $class_swap на что меняем
@@ -83,6 +87,20 @@ class DI
         $hash = \md5($class_str);
         self::$classes_swap ??= [];
         self::$classes_swap[$hash] = $class_swap;
+    }
+
+    /**
+     * @param class-string $needs
+     */
+    public static function register(string $needs, \Closure $give, bool $as_singleton = false, ?string $when = null): void
+    {
+        $hash = \md5($needs);
+        self::$register ??= [];
+        self::$register[$hash] = [
+            'give' => $give,
+            'as_singleton' => $as_singleton,
+            'when' => $when,
+        ];
     }
 
     // ------------------------------------------------------------------
