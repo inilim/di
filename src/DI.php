@@ -43,7 +43,7 @@ class DI
     }
 
     /**
-     * получить экземпляр если есть, иначе биндим и получаем
+     * получить экземпляр если есть, иначе биндим и получаем | не рекомендуется использовать
      * 
      * @template T of object
      * @param class-string<T> $class_str
@@ -91,8 +91,9 @@ class DI
     ): void {
         if (!\is_array($when)) $when = [$when];
         self::$binds ??= [];
+        $b = new BindItem($concrete);
         foreach ($when as $w) {
-            self::$binds[self::hash($abstract . ($w ?? ''))] = new BindItem($concrete);
+            self::$binds[self::hash($abstract . ($w ?? ''))] = $b;
         }
     }
 
