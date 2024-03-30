@@ -6,7 +6,7 @@ use Inilim\DI\BindItem;
 
 class DI
 {
-    protected const POSTFIX = '|s';
+    protected const PREFIX_SINGLETON = 's|';
 
     /**
      * @var null|array<string,class-string|object>
@@ -19,7 +19,15 @@ class DI
     /**
      * @var null|array<string,BindItem|true>
      */
-    protected static ?array $binds  = null;
+    protected static ?array $binds = null;
+    /**
+     * @var null|array<string,mixed>
+     */
+    protected static ?array $primitive = null;
+
+    // ------------------------------------------------------------------
+    // ____
+    // ------------------------------------------------------------------
 
     /**
      * @template T of object
@@ -41,6 +49,10 @@ class DI
         }
         return self::make($class_str, $args);
     }
+
+    // ------------------------------------------------------------------
+    // Bind Singleton
+    // ------------------------------------------------------------------
 
     /**
      * получить экземпляр если есть, иначе биндим и получаем | не рекомендуется использовать
@@ -76,13 +88,17 @@ class DI
         ?\Closure $concrete = null,
     ): void {
         self::$binds ??= [];
-        self::$binds[self::hash($abstract . self::POSTFIX)] = new BindItem($concrete ?? $abstract);
+        self::$binds[self::hash(self::PREFIX_SINGLETON . $abstract)] = new BindItem($concrete ?? $abstract);
     }
+
+    // ------------------------------------------------------------------
+    // Bind
+    // ------------------------------------------------------------------
 
     /**
      * @param class-string $abstract контракт или класс реализации
      * @param \Closure|class-string $concrete реализация зависимости которя будет отдана
-     * @param null|class-string|class-string[] $when тот кто запрашивает зависимость, чаще всего controller
+     * @param null|class-string|class-string[] $when тот кто запрашивает зависимость, например controller
      */
     public static function bind(
         string $abstract,
@@ -98,20 +114,39 @@ class DI
     }
 
     // ------------------------------------------------------------------
-    // protected
+    // Primitive
     // ------------------------------------------------------------------
 
     /**
-     * @template T of object
-     * @param class-string<T> $class_str
-     * @param mixed[]|array{} $args
-     * @return T
+     * @return mixed
      */
-    protected static function make(string $class_str, array $args): object
+    public static function getPrimitive(string $key, ?string $context = null)
     {
-        if ($args) return new $class_str(...$args);
-        return new $class_str;
+        $h              = self::hash($key);
+        $h_with_context = self::hash($key . ($context ?? ''));
+        return self::$primitive[$h_with_context] ?? self::$primitive[$h] ?? null;
     }
+
+    /**
+     * @param mixed $give возвращаемое значение
+     * @param null|class-string|class-string[] $when тот кто запрашивает, например controller
+     * @return void
+     */
+    public static function bindPrimitive(
+        string $key,
+        $give,
+        null|string|array $when = null
+    ): void {
+        if (!\is_array($when)) $when = [$when];
+        self::$primitive ??= [];
+        foreach ($when as $w) {
+            self::$primitive[self::hash($key . ($w ?? ''))] = $give;
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // protected
+    // ------------------------------------------------------------------
 
     /**
      * @template T of object
@@ -120,7 +155,7 @@ class DI
      */
     protected static function getFromBindSingleton(string $class_str): object
     {
-        $h = self::hash($class_str . self::POSTFIX);
+        $h = self::hash(self::PREFIX_SINGLETON . $class_str);
 
         if (isset(self::$singleton[$h])) {
             return self::$singleton[$h];
@@ -175,6 +210,10 @@ class DI
         return $class_or_obj;
     }
 
+    // ------------------------------------------------------------------
+    // has
+    // ------------------------------------------------------------------
+
     protected static function hasSwap(string $class_str): bool
     {
         if (self::$swaps === null) return false;
@@ -184,7 +223,7 @@ class DI
     protected static function hasBindSingleton(string $class_str): bool
     {
         if (self::$binds === null) return false;
-        return isset(self::$binds[self::hash($class_str . self::POSTFIX)]);
+        return isset(self::$binds[self::hash(self::PREFIX_SINGLETON . $class_str)]);
     }
 
     protected static function hasBind(string $class_str, ?string $context): bool
@@ -195,6 +234,22 @@ class DI
         return isset(self::$binds[$h_with_context])
             ||
             isset(self::$binds[$h]);
+    }
+
+    // ------------------------------------------------------------------
+    // ____
+    // ------------------------------------------------------------------
+
+    /**
+     * @template T of object
+     * @param class-string<T> $class_str
+     * @param mixed[]|array{} $args
+     * @return T
+     */
+    protected static function make(string $class_str, array $args): object
+    {
+        if ($args) return new $class_str(...$args);
+        return new $class_str;
     }
 
     protected static function hash(?string $value): string

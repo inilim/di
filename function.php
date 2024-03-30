@@ -22,6 +22,22 @@ if (!function_exists('_DI')) {
     }
 }
 
+if (!function_exists('_DIValue')) {
+    /**
+     * @return mixed
+     */
+    function _DIValue(string $key, ?string $context = null)
+    {
+        $context ??= \array_column(
+            \debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS, 2),
+            'class'
+        )[0] ?? null;
+
+        return DI::getPrimitive($key, $context);
+    }
+}
+
+
 if (!function_exists('_DIWithoutContext')) {
     /**
      * Получить зависимость без указания контекста
@@ -37,17 +53,17 @@ if (!function_exists('_DIWithoutContext')) {
     }
 }
 
-if (!function_exists('_DIExplicitContext')) {
+if (!function_exists('_DIContext')) {
     /**
-     * получить зависимость с явным указанием контекста
+     * получить зависимость с возможностью указать контекст
      * 
      * @template T of object
      * @param class-string<T> $class_str
      * @param mixed[]|array{} $args
-     * @param class-string $context
+     * @param null|class-string $context
      * @return T
      */
-    function _DIExplicitContext(string $class_str, string $context, ...$args)
+    function _DIContext(string $class_str, ?string $context = null, ...$args)
     {
         return DI::getOrMake($class_str, $context, ...$args);
     }
