@@ -55,6 +55,8 @@ if (!function_exists('_DIExplicitContext')) {
 
 if (!function_exists('_DISingleton')) {
     /**
+     * в случаи если нету прослоки для регистрации
+     * 
      * @template T of object
      * @param class-string<T> $class_str
      * @param mixed[]|array{} $args

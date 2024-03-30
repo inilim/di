@@ -28,7 +28,7 @@ class DI
      * @param null|class-string $context controller
      * @return T
      */
-    public static function getOrMake(string $class_str, ?string $context = null, ...$args)
+    public static function getOrMake(string $class_str, ?string $context = null, ...$args): object
     {
         if (self::hasSwap($class_str)) {
             return self::getFromSwap($class_str, $args);
@@ -50,7 +50,7 @@ class DI
      * @param mixed[]|array{} $args
      * @return T
      */
-    public static function getOrBindSingleton(string $class_str, ...$args)
+    public static function getOrBindSingleton(string $class_str, ...$args): object
     {
         if (self::hasBindSingleton($class_str)) {
             return self::getFromBindSingleton($class_str);
@@ -107,7 +107,7 @@ class DI
      * @param mixed[]|array{} $args
      * @return T
      */
-    protected static function make(string $class_str, array $args)
+    protected static function make(string $class_str, array $args): object
     {
         if ($args) return new $class_str(...$args);
         return new $class_str;
