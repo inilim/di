@@ -13,11 +13,12 @@ if (!function_exists('_DI')) {
      */
     function _DI(string $class_str, ...$args)
     {
-        return DI::getOrMake(
-            $class_str,
-            _DIDefineContext(2)[1] ?? null,
-            ...$args
-        );
+        $context = \array_column(
+            \debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS, 2),
+            'class'
+        )[0] ?? null;
+
+        return DI::getOrMake($class_str, $context, ...$args);
     }
 }
 
@@ -62,17 +63,5 @@ if (!function_exists('_DISingleton')) {
     function _DISingleton(string $class_str, ...$args)
     {
         return DI::getOrBindSingleton($class_str, ...$args);
-    }
-}
-
-if (!function_exists('_DIDefineContext')) {
-    /**
-     * @return class-string[]|array{}
-     */
-    function _DIDefineContext(int $size = 5): array
-    {
-        $trace = \debug_backtrace(\DEBUG_BACKTRACE_IGNORE_ARGS, ($size + 1));
-        \array_shift($trace);
-        return \array_column($trace, 'class');
     }
 }

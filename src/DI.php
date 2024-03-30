@@ -126,6 +126,7 @@ class DI
         }
 
         $b = self::$binds[$h];
+        /** @var BindItem $b */
 
         if (\is_string($b->concrete)) $obj = self::make($b->concrete, []);
         else $obj = ($b->concrete)();
@@ -149,6 +150,7 @@ class DI
         $h              = self::hash($class_str);
         $h_with_context = self::hash($class_str . ($context ?? ''));
         $b              = self::$binds[$h_with_context] ?? self::$binds[$h];
+        /** @var BindItem $b */
 
         if (\is_string($b->concrete)) $obj = self::make($b->concrete, $args);
         else $obj = ($b->concrete)(...$args);
@@ -187,11 +189,11 @@ class DI
     protected static function hasBind(string $class_str, ?string $context): bool
     {
         if (self::$binds === null) return false;
-        $hash              = self::hash($class_str);
-        $hash_with_context = self::hash($class_str . ($context ?? ''));
-        return isset(self::$binds[$hash_with_context])
+        $h              = self::hash($class_str);
+        $h_with_context = self::hash($class_str . ($context ?? ''));
+        return isset(self::$binds[$h_with_context])
             ||
-            isset(self::$binds[$hash]);
+            isset(self::$binds[$h]);
     }
 
     protected static function hash(?string $value): string
