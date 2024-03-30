@@ -53,7 +53,7 @@ class DI
     public static function getOrBindSingleton(string $class_str, ...$args): object
     {
         if (self::hasBindSingleton($class_str)) {
-            return self::getFromBindSingleton($class_str);
+            return self::getOrMake($class_str);
         }
 
         if (!$args) {
