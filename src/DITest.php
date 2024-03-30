@@ -21,7 +21,7 @@ class DITest extends DI
         self::$swaps = [];
     }
 
-    public static function clearAllInstance(): void
+    public static function clearAllSingleton(): void
     {
         self::$singleton = [];
     }
@@ -34,10 +34,5 @@ class DITest extends DI
     public static function hasBind(string $class_str, ?string $context): bool
     {
         return parent::hasBind($class_str, $context);
-    }
-
-    public static function hasInstance(string $class_str, ?string $context): bool
-    {
-        return isset(self::$singleton[self::hash($class_str) . self::hash($context)]);
     }
 }
