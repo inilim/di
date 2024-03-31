@@ -6,7 +6,7 @@ use Inilim\DI\BindItem;
 
 class DI
 {
-    protected const PREFIX_SINGLETON = 's|';
+    protected const PREFIX_SINGLETON = '|s';
 
     /**
      * @var null|array<string,class-string|object>
@@ -30,6 +30,19 @@ class DI
     // ------------------------------------------------------------------
 
     /**
+     * non swap, only create
+     * 
+     * @template T of object
+     * @param class-string<T> $class_str
+     * @param mixed[]|array{} $args
+     * @return T
+     */
+    public static function make(string $class_str, ...$args): object
+    {
+        return self::create($class_str, ...$args);
+    }
+
+    /**
      * @template T of object
      * @param class-string<T> $class_str
      * @param mixed[]|array{} $args
@@ -47,7 +60,7 @@ class DI
         if (self::hasBind($class_str, $context)) {
             return self::getFromBind($class_str, $context, $args);
         }
-        return self::make($class_str, $args);
+        return self::create($class_str, $args);
     }
 
     // ------------------------------------------------------------------
@@ -88,7 +101,7 @@ class DI
         ?\Closure $concrete = null,
     ): void {
         self::$binds ??= [];
-        self::$binds[self::hash(self::PREFIX_SINGLETON . $abstract)] = new BindItem($concrete ?? $abstract);
+        self::$binds[self::hash($abstract . self::PREFIX_SINGLETON)] = new BindItem($concrete ?? $abstract);
     }
 
     // ------------------------------------------------------------------
@@ -109,7 +122,7 @@ class DI
         self::$binds ??= [];
         $b = new BindItem($concrete);
         foreach ($when as $w) {
-            self::$binds[self::hash($abstract . ($w ?? ''))] = $b;
+            self::$binds[self::hash($abstract . self::trim($w))] = $b;
         }
     }
 
@@ -119,12 +132,15 @@ class DI
 
     /**
      * @return mixed
+     * @param null|class-string $context
+     * @param mixed $default
      */
-    public static function getPrimitive(string $key, ?string $context = null)
+    public static function getPrimitive(string $key, ?string $context = null, $default = null)
     {
         $h              = self::hash($key);
-        $h_with_context = self::hash($key . ($context ?? ''));
-        return self::$primitive[$h_with_context] ?? self::$primitive[$h] ?? null;
+        // $h_with_context = self::hash(($context ?? '') . $key);
+        $h_with_context = $context ? self::hash($context . $key) : $h;
+        return self::$primitive[$h_with_context] ?? self::$primitive[$h] ?? $default;
     }
 
     /**
@@ -140,7 +156,7 @@ class DI
         if (!\is_array($when)) $when = [$when];
         self::$primitive ??= [];
         foreach ($when as $w) {
-            self::$primitive[self::hash($key . ($w ?? ''))] = $give;
+            self::$primitive[self::hash(($w ?? '') . $key)] = $give;
         }
     }
 
@@ -155,7 +171,7 @@ class DI
      */
     protected static function getFromBindSingleton(string $class_str): object
     {
-        $h = self::hash(self::PREFIX_SINGLETON . $class_str);
+        $h = self::hash($class_str . self::PREFIX_SINGLETON);
 
         if (isset(self::$singleton[$h])) {
             return self::$singleton[$h];
@@ -164,7 +180,7 @@ class DI
         $b = self::$binds[$h];
         /** @var BindItem $b */
 
-        if (\is_string($b->concrete)) $obj = self::make($b->concrete, []);
+        if (\is_string($b->concrete)) $obj = self::create($b->concrete, []);
         else $obj = ($b->concrete)();
         /** @var object $obj */
 
@@ -184,11 +200,12 @@ class DI
     protected static function getFromBind(string $class_str, ?string $context, array $args): object
     {
         $h              = self::hash($class_str);
-        $h_with_context = self::hash($class_str . ($context ?? ''));
+        // $h_with_context = self::hash($class_str . self::trim($context));
+        $h_with_context = $context ? self::hash($class_str . self::trim($context)) : $h;
         $b              = self::$binds[$h_with_context] ?? self::$binds[$h];
         /** @var BindItem $b */
 
-        if (\is_string($b->concrete)) $obj = self::make($b->concrete, $args);
+        if (\is_string($b->concrete)) $obj = self::create($b->concrete, $args);
         else $obj = ($b->concrete)(...$args);
         /** @var object $obj */
 
@@ -205,7 +222,7 @@ class DI
     {
         $class_or_obj = self::$swaps[self::hash($class_str)];
         if (\is_string($class_or_obj)) {
-            return self::make($class_or_obj, $args);
+            return self::create($class_or_obj, $args);
         }
         return $class_or_obj;
     }
@@ -223,14 +240,17 @@ class DI
     protected static function hasBindSingleton(string $class_str): bool
     {
         if (self::$binds === null) return false;
-        return isset(self::$binds[self::hash(self::PREFIX_SINGLETON . $class_str)]);
+        return isset(self::$binds[self::hash($class_str . self::PREFIX_SINGLETON)]);
     }
 
     protected static function hasBind(string $class_str, ?string $context): bool
     {
         if (self::$binds === null) return false;
+
         $h              = self::hash($class_str);
-        $h_with_context = self::hash($class_str . ($context ?? ''));
+        // $h_with_context = self::hash($class_str . self::trim($context));
+        $h_with_context = $context ? self::hash($class_str . self::trim($context)) : $h;
+
         return isset(self::$binds[$h_with_context])
             ||
             isset(self::$binds[$h]);
@@ -246,7 +266,7 @@ class DI
      * @param mixed[]|array{} $args
      * @return T
      */
-    protected static function make(string $class_str, array $args): object
+    protected static function create(string $class_str, array $args): object
     {
         if ($args) return new $class_str(...$args);
         return new $class_str;
@@ -254,8 +274,13 @@ class DI
 
     protected static function hash(?string $value): string
     {
-        $c = \ltrim(($value ?? ''), '\\');
+        $c = self::trim($value);
         if ($c === '') return '';
         return \md5($c);
+    }
+
+    protected static function trim(?string $value): string
+    {
+        return $value ? \ltrim($value, '\\') : '';
     }
 }
