@@ -3,10 +3,12 @@
 namespace Inilim\DI;
 
 use Inilim\DI\BindItem;
+use Inilim\DI\PrimitiveItem;
 
 class DI
 {
     protected const PREFIX_SINGLETON = '|s';
+    protected const SEP = '|';
 
     /**
      * @var null|array<string,class-string|object>
@@ -21,7 +23,7 @@ class DI
      */
     protected static ?array $binds = null;
     /**
-     * @var null|array<string,mixed>
+     * @var null|array<string,PrimitiveItem>
      */
     protected static ?array $primitive = null;
 
@@ -120,9 +122,10 @@ class DI
     ): void {
         if (!\is_array($when)) $when = [$when];
         self::$binds ??= [];
-        $b = new BindItem($concrete);
+        $item = new BindItem($concrete);
         foreach ($when as $w) {
-            self::$binds[self::hash($abstract . self::trim($w))] = $b;
+            // self::SEP важен
+            self::$binds[self::hash($abstract . self::SEP . self::trim($w))] = $item;
         }
     }
 
@@ -137,13 +140,15 @@ class DI
      */
     public static function getPrimitive(string $key, ?string $context = null, $default = null)
     {
-        $h              = self::hash($key);
-        // $h_with_context = self::hash(($context ?? '') . $key);
-        $h_with_context = $context ? self::hash($context . $key) : $h;
-        return self::$primitive[$h_with_context] ?? self::$primitive[$h] ?? $default;
+        $h              = self::hash(self::SEP . $key);
+        $h_with_context = $context ? self::hash($context . self::SEP . $key) : $h;
+        $r = self::$primitive[$h_with_context] ?? self::$primitive[$h] ?? null;
+        if ($r !== null) return $r->value;
+        return $default;
     }
 
     /**
+     * class-string|key = context|key
      * @param mixed $give возвращаемое значение
      * @param null|class-string|class-string[] $when тот кто запрашивает, например controller
      * @return void
@@ -155,8 +160,15 @@ class DI
     ): void {
         if (!\is_array($when)) $when = [$when];
         self::$primitive ??= [];
+        $item = new PrimitiveItem($give);
         foreach ($when as $w) {
-            self::$primitive[self::hash(($w ?? '') . $key)] = $give;
+            // "|" очень важен, к примеру у нас есть класс:
+            // App\Record\ArticleLongGreed
+            // и есть ключ для примитива Greed
+            // Но еще у нас есть класс:
+            // App\Record\ArticleLong
+            // если делать конкатенацию без вертикальной черты, то может получится так что мы биндим значение в некорректный класс "ArticleLongGreed"
+            self::$primitive[self::hash(($w ?? '') . self::SEP . $key)] = $item;
         }
     }
 
@@ -199,9 +211,8 @@ class DI
      */
     protected static function getFromBind(string $class_str, ?string $context, array $args): object
     {
-        $h              = self::hash($class_str);
-        // $h_with_context = self::hash($class_str . self::trim($context));
-        $h_with_context = $context ? self::hash($class_str . self::trim($context)) : $h;
+        $h              = self::hash($class_str . self::SEP);
+        $h_with_context = $context ? self::hash($class_str . self::SEP . self::trim($context)) : $h;
         $b              = self::$binds[$h_with_context] ?? self::$binds[$h];
         /** @var BindItem $b */
 
@@ -247,9 +258,8 @@ class DI
     {
         if (self::$binds === null) return false;
 
-        $h              = self::hash($class_str);
-        // $h_with_context = self::hash($class_str . self::trim($context));
-        $h_with_context = $context ? self::hash($class_str . self::trim($context)) : $h;
+        $h              = self::hash($class_str . self::SEP);
+        $h_with_context = $context ? self::hash($class_str . self::SEP . self::trim($context)) : $h;
 
         return isset(self::$binds[$h_with_context])
             ||
@@ -274,9 +284,9 @@ class DI
 
     protected static function hash(?string $value): string
     {
-        $c = self::trim($value);
-        if ($c === '') return '';
-        return \md5($c);
+        $h = self::trim($value);
+        if ($h === '') return '';
+        return \md5($h);
     }
 
     protected static function trim(?string $value): string

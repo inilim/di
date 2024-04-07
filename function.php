@@ -71,7 +71,7 @@ if (!function_exists('_DIContext')) {
 
 if (!function_exists('_DISingleton')) {
     /**
-     * в случаи если нету прослоки для регистрации
+     * в случаи если нету прослойки для регистрации
      * 
      * @template T of object
      * @param class-string<T> $class_str
