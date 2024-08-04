@@ -39,7 +39,7 @@ class DI
      * @param mixed[]|array{} $args
      * @return T
      */
-    public static function make(string $class_str, ...$args): object
+    static function make(string $class_str, ...$args): object
     {
         return self::create($class_str, ...$args);
     }
@@ -51,7 +51,7 @@ class DI
      * @param null|class-string $context controller
      * @return T
      */
-    public static function getOrMake(string $class_str, ?string $context = null, ...$args): object
+    static function getOrMake(string $class_str, ?string $context = null, ...$args): object
     {
         if (self::hasSwap($class_str)) {
             return self::getFromSwap($class_str, $args);
@@ -77,7 +77,7 @@ class DI
      * @param mixed[]|array{} $args
      * @return T
      */
-    public static function getOrBindSingleton(string $class_str, ...$args): object
+    static function getOrBindSingleton(string $class_str, ...$args): object
     {
         if (self::hasBindSingleton($class_str)) {
             return self::getOrMake($class_str);
@@ -86,7 +86,7 @@ class DI
         if (!$args) {
             self::bindSingleton($class_str);
         } else {
-            self::bindSingleton($class_str, function () use ($class_str, $args) {
+            self::bindSingleton($class_str, static function () use ($class_str, $args) {
                 return new $class_str(...$args);
             });
         };
@@ -98,7 +98,7 @@ class DI
      * @param \Closure|null $concrete
      * @return void
      */
-    public static function bindSingleton(
+    static function bindSingleton(
         string $abstract,
         ?\Closure $concrete = null,
     ): void {
@@ -115,7 +115,7 @@ class DI
      * @param \Closure|class-string $concrete реализация зависимости которя будет отдана
      * @param null|class-string|class-string[] $when тот кто запрашивает зависимость, например controller
      */
-    public static function bind(
+    static function bind(
         string $abstract,
         \Closure|string $concrete,
         null|string|array $when = null
@@ -138,7 +138,7 @@ class DI
      * @param null|class-string $context
      * @param mixed $default
      */
-    public static function getPrimitive(string $key, ?string $context = null, $default = null)
+    static function getPrimitive(string $key, ?string $context = null, $default = null)
     {
         $h              = self::hash(self::SEP . $key);
         $h_with_context = $context ? self::hash($context . self::SEP . $key) : $h;
@@ -153,7 +153,7 @@ class DI
      * @param null|class-string|class-string[] $when тот кто запрашивает, например controller
      * @return void
      */
-    public static function bindPrimitive(
+    static function bindPrimitive(
         string $key,
         $give,
         null|string|array $when = null

@@ -4,7 +4,7 @@ namespace Inilim\DI;
 
 class PrimitiveItem
 {
-    public function __construct(
+    function __construct(
         /**
          * @var mixed
          */

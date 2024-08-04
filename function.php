@@ -2,7 +2,7 @@
 
 use Inilim\DI\DI;
 
-if (!function_exists('_DI')) {
+if (!\function_exists('_DI')) {
     /**
      * получить зависимость, контекст будет определен автоматически
      * 
@@ -22,7 +22,7 @@ if (!function_exists('_DI')) {
     }
 }
 
-if (!function_exists('_DIValue')) {
+if (!\function_exists('_DIValue')) {
     /**
      * @return mixed
      */
@@ -38,7 +38,7 @@ if (!function_exists('_DIValue')) {
 }
 
 
-if (!function_exists('_DIWithoutContext')) {
+if (!\function_exists('_DIWithoutContext')) {
     /**
      * Получить зависимость без указания контекста
      * 
@@ -53,7 +53,7 @@ if (!function_exists('_DIWithoutContext')) {
     }
 }
 
-if (!function_exists('_DIContext')) {
+if (!\function_exists('_DIContext')) {
     /**
      * получить зависимость с возможностью указать контекст
      * 
@@ -69,7 +69,7 @@ if (!function_exists('_DIContext')) {
     }
 }
 
-if (!function_exists('_DISingleton')) {
+if (!\function_exists('_DISingleton')) {
     /**
      * в случаи если нету прослойки для регистрации
      * 

@@ -4,7 +4,7 @@ namespace Inilim\DI;
 
 class BindItem
 {
-    public function __construct(
+    function __construct(
         /**
          * @var \Closure|class-string
          */
