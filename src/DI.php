@@ -35,34 +35,35 @@ class DI
      * non swap, only create
      * 
      * @template T of object
-     * @param class-string<T> $class_str
+     * @param class-string<T> $class
      * @param mixed[]|array{} $args
      * @return T
      */
-    static function make(string $class_str, ...$args): object
+    static function make(string $class, ...$args): object
     {
-        return self::create($class_str, ...$args);
+        return self::create($class, ...$args);
     }
 
     /**
      * @template T of object
-     * @param class-string<T> $class_str
+     * @param class-string<T> $class
      * @param mixed[]|array{} $args
-     * @param null|class-string $context controller
+     * @param null|class-string|object $context controller
      * @return T
      */
-    static function getOrMake(string $class_str, ?string $context = null, ...$args): object
+    static function getOrMake(string $class, $context = null, ...$args): object
     {
-        if (self::hasSwap($class_str)) {
-            return self::getFromSwap($class_str, $args);
+        $_context = self::prepareContext($context);
+        if (self::hasSwap($class)) {
+            return self::getFromSwap($class, $args);
         }
-        if (self::hasBindSingleton($class_str)) {
-            return self::getFromBindSingleton($class_str);
+        if (self::hasBindSingleton($class)) {
+            return self::getFromBindSingleton($class);
         }
-        if (self::hasBind($class_str, $context)) {
-            return self::getFromBind($class_str, $context, $args);
+        if (self::hasBind($class, $_context)) {
+            return self::getFromBind($class, $_context, $args);
         }
-        return self::create($class_str, $args);
+        return self::create($class, $args);
     }
 
     // ------------------------------------------------------------------
@@ -73,24 +74,22 @@ class DI
      * получить экземпляр если есть, иначе биндим и получаем | не рекомендуется использовать
      * 
      * @template T of object
-     * @param class-string<T> $class_str
+     * @param class-string<T> $class
      * @param mixed[]|array{} $args
      * @return T
      */
-    static function getOrBindSingleton(string $class_str, ...$args): object
+    static function getOrBindSingleton(string $class, ...$args): object
     {
-        if (self::hasBindSingleton($class_str)) {
-            return self::getOrMake($class_str);
+        if (self::hasBindSingleton($class)) {
+            return self::getOrMake($class);
         }
 
         if (!$args) {
-            self::bindSingleton($class_str);
+            self::bindSingleton($class);
         } else {
-            self::bindSingleton($class_str, static function () use ($class_str, $args) {
-                return new $class_str(...$args);
-            });
+            self::bindSingleton($class, static fn() => new $class(...$args));
         };
-        return self::getOrMake($class_str);
+        return self::getOrMake($class);
     }
 
     /**
@@ -135,13 +134,14 @@ class DI
 
     /**
      * @return mixed
-     * @param null|class-string $context
+     * @param null|class-string|object $context
      * @param mixed $default
      */
-    static function getPrimitive(string $key, ?string $context = null, $default = null)
+    static function getPrimitive(string $key, $context = null, $default = null)
     {
         $h              = self::hash(self::SEP . $key);
-        $h_with_context = $context ? self::hash($context . self::SEP . $key) : $h;
+        $_context       = self::prepareContext($context);
+        $h_with_context = $_context ? self::hash($_context . self::SEP . $key) : $h;
         $r = self::$primitive[$h_with_context] ?? self::$primitive[$h] ?? null;
         if ($r !== null) return $r->value;
         return $default;
@@ -178,12 +178,12 @@ class DI
 
     /**
      * @template T of object
-     * @param class-string<T> $class_str
+     * @param class-string<T> $class
      * @return T
      */
-    protected static function getFromBindSingleton(string $class_str): object
+    protected static function getFromBindSingleton(string $class): object
     {
-        $h = self::hash($class_str . self::PREFIX_SINGLETON);
+        $h = self::hash($class . self::PREFIX_SINGLETON);
 
         if (isset(self::$singleton[$h])) {
             return self::$singleton[$h];
@@ -204,15 +204,15 @@ class DI
 
     /**
      * @template T of object
-     * @param class-string<T> $class_str
+     * @param class-string<T> $class
      * @param null|class-string $context
      * @param mixed[]|array{} $args
      * @return T
      */
-    protected static function getFromBind(string $class_str, ?string $context, array $args): object
+    protected static function getFromBind(string $class, ?string $context, array $args): object
     {
-        $h              = self::hash($class_str . self::SEP);
-        $h_with_context = $context ? self::hash($class_str . self::SEP . self::trim($context)) : $h;
+        $h              = self::hash($class . self::SEP);
+        $h_with_context = $context ? self::hash($class . self::SEP . self::trim($context)) : $h;
         $b              = self::$binds[$h_with_context] ?? self::$binds[$h];
         /** @var BindItem $b */
 
@@ -225,13 +225,13 @@ class DI
 
     /**
      * @template T of object
-     * @param class-string<T> $class_str
+     * @param class-string<T> $class
      * @param mixed[]|array{} $args
      * @return T
      */
-    protected static function getFromSwap(string $class_str, array $args): object
+    protected static function getFromSwap(string $class, array $args): object
     {
-        $class_or_obj = self::$swaps[self::hash($class_str)];
+        $class_or_obj = self::$swaps[self::hash($class)];
         if (\is_string($class_or_obj)) {
             return self::create($class_or_obj, $args);
         }
@@ -242,24 +242,24 @@ class DI
     // has
     // ------------------------------------------------------------------
 
-    protected static function hasSwap(string $class_str): bool
+    protected static function hasSwap(string $class): bool
     {
         if (self::$swaps === null) return false;
-        return isset(self::$swaps[self::hash($class_str)]);
+        return isset(self::$swaps[self::hash($class)]);
     }
 
-    protected static function hasBindSingleton(string $class_str): bool
+    protected static function hasBindSingleton(string $class): bool
     {
         if (self::$binds === null) return false;
-        return isset(self::$binds[self::hash($class_str . self::PREFIX_SINGLETON)]);
+        return isset(self::$binds[self::hash($class . self::PREFIX_SINGLETON)]);
     }
 
-    protected static function hasBind(string $class_str, ?string $context): bool
+    protected static function hasBind(string $class, ?string $context): bool
     {
         if (self::$binds === null) return false;
 
-        $h              = self::hash($class_str . self::SEP);
-        $h_with_context = $context ? self::hash($class_str . self::SEP . self::trim($context)) : $h;
+        $h              = self::hash($class . self::SEP);
+        $h_with_context = $context ? self::hash($class . self::SEP . self::trim($context)) : $h;
 
         return isset(self::$binds[$h_with_context])
             ||
@@ -271,15 +271,28 @@ class DI
     // ------------------------------------------------------------------
 
     /**
+     * @param null|class-string|object
+     * @return string|null
+     */
+    protected static function prepareContext($context): ?string
+    {
+        return match (true) {
+            \is_string($context) => $context === '' ? null : $context,
+            \is_object($context) => $context::class,
+            default              => null,
+        };
+    }
+
+    /**
      * @template T of object
-     * @param class-string<T> $class_str
+     * @param class-string<T> $class
      * @param mixed[]|array{} $args
      * @return T
      */
-    protected static function create(string $class_str, array $args): object
+    protected static function create(string $class, array $args): object
     {
-        if ($args) return new $class_str(...$args);
-        return new $class_str;
+        if ($args) return new $class(...$args);
+        return new $class;
     }
 
     protected static function hash(?string $value): string
