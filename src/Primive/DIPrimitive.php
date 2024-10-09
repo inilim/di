@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace Inilim\DI\Primitive;
 
 use Inilim\DI\Hash;
-use Inilim\DI\Primitive\Item;
-use Inilim\DI\Primitive\DIPrimitiveInterface;
+use Inilim\DI\Primitive\Bind;
 
-final class DIPrimitive implements DIPrimitiveInterface
+final class DIPrimitive
 {
-    /**
-     * @var null|array<string,Item>
-     */
-    protected ?array $bind = null;
+    protected Bind $bind;
+
+    function __construct(Bind $bind)
+    {
+        $this->bind = $bind;
+    }
 
     /**
      * @param non-empty-string $key
@@ -23,37 +24,13 @@ final class DIPrimitive implements DIPrimitiveInterface
      */
     function get(string $key, $context = null, $default = null)
     {
-        if ($this->bind === null) {
-            return $default;
-        }
-
         $hash = Hash::getWithContext($key, $context);
-
-        $item = $this->bind[$hash] ?? null;
+        $item = $this->bind->get($hash);
 
         if ($item === null) {
             return $default;
         }
 
         return $item->getValue();
-    }
-
-    /**
-     * @param non-empty-string $key
-     * @param mixed $give return value
-     * @param null|class-string|class-string[] $context
-     */
-    function bind(string $key, $give, $context = null): void
-    {
-        $_context  = \is_array($context) ? $context : [$context];
-
-        $this->bind ??= [];
-
-        $item = new Item($give);
-
-        foreach ($_context as $c) {
-            $hash = Hash::getWithContext($key, $c);
-            $this->bind[$hash] = $item;
-        }
     }
 }

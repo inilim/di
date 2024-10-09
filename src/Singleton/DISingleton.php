@@ -5,14 +5,16 @@ declare(strict_types=1);
 namespace Inilim\DI\Singleton;
 
 use Inilim\DI\ItemConcrete;
-use Inilim\DI\Singleton\DISingletonInterface;
+use Inilim\DI\Singleton\Bind;
 
-final class DISingleton implements DISingletonInterface
+final class DISingleton
 {
-    /**
-     * @var null|array<string,object|ItemConcrete>
-     */
-    protected ?array $bind = null;
+    protected Bind $bind;
+
+    function __construct(Bind $bind)
+    {
+        $this->bind = $bind;
+    }
 
     /**
      * @template T of object
@@ -22,16 +24,8 @@ final class DISingleton implements DISingletonInterface
     function get(string $abstract): object
     {
         $_abstract = \ltrim($abstract, '\\');
-
-        if ($this->bind === null) {
-            throw new \Exception(\sprintf(
-                'Target [%s] is not instantiable.',
-                $_abstract
-            ));
-        }
-
         $hash      = \md5($_abstract);
-        $obj       =  $this->bind[$hash] ?? null;
+        $obj       =  $this->bind->get($hash);
 
         if ($obj === null) {
             throw new \Exception(\sprintf(
@@ -84,20 +78,7 @@ final class DISingleton implements DISingletonInterface
             ));
         }
 
-        return $this->bind[$hash] = $concrete;
-    }
-
-    /**
-     * @param class-string $abstract
-     * @param \Closure|class-string|null $concrete
-     */
-    function bind(string $abstract, $concrete = null): void
-    {
-        $_abstract = \ltrim($abstract, '\\');
-        if (\is_string($concrete)) {
-            $concrete = \ltrim($concrete, '\\');
-        }
-        $this->bind ??= [];
-        $this->bind[\md5($_abstract)] = new ItemConcrete($concrete ?? $_abstract);
+        $this->bind->set($hash, $concrete);
+        return $concrete;
     }
 }

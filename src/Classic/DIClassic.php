@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace Inilim\DI\Classic;
 
 use Inilim\DI\Hash;
-use Inilim\DI\ItemConcrete;
-use Inilim\DI\Classic\DIClassicInterface;
+use Inilim\DI\Classic\Bind;
 
-final class DIClassic implements DIClassicInterface
+final class DIClassic
 {
-    /**
-     * @var null|array<string,ItemConcrete>
-     */
-    protected ?array $bind = null;
+    protected Bind $bind;
+
+    function __construct(Bind $bind)
+    {
+        $this->bind = $bind;
+    }
 
     /**
      * @template T of object
@@ -25,15 +26,8 @@ final class DIClassic implements DIClassicInterface
     {
         $_abstract = \ltrim($abstract, '\\');
 
-        if ($this->bind === null) {
-            throw new \Exception(\sprintf(
-                'Target [%s] is not instantiable.',
-                $_abstract
-            ));
-        }
-
-        $hash      = Hash::getWithContext($_abstract, $context);
-        $item      = $this->bind[$hash] ?? null;
+        $hash = Hash::getWithContext($_abstract, $context);
+        $item = $this->bind->get($hash);
 
         if ($item === null) {
             throw new \Exception(\sprintf(
@@ -83,27 +77,5 @@ final class DIClassic implements DIClassicInterface
         }
 
         return $concrete;
-    }
-
-    /**
-     * @param class-string $abstract contract/interface OR realization/implementation
-     * @param null|class-string|\Closure $concrete realization/implementation
-     * @param null|class-string|class-string[] $context
-     */
-    function bind(string $abstract, $concrete = null, $context = null): void
-    {
-        $_abstract = \ltrim($abstract, '\\');
-        $_context  = \is_array($context) ? $context : [$context];
-        if (\is_string($concrete)) {
-            $concrete = \ltrim($concrete, '\\');
-        }
-        $item      = new ItemConcrete($concrete ?? $_abstract);
-
-        $this->bind ??= [];
-
-        foreach ($_context as $c) {
-            $hash = Hash::getWithContext($_abstract, $c);
-            $this->bind[$hash] = $item;
-        }
     }
 }

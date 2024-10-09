@@ -4,7 +4,46 @@ declare(strict_types=1);
 
 namespace Inilim\DI\Swap;
 
+use Inilim\DI\Hash;
+use Inilim\DI\Swap\Bind;
+
 final class DISwap
 {
-    protected ?array $bind = null;
+    protected Bind $bind;
+
+    function __construct(Bind $bind)
+    {
+        $this->bind = $bind;
+    }
+
+    function get(string $target, $context = null, ...$args): object
+    {
+        $_target = \ltrim($target, '\\');
+
+        $hash = Hash::getWithContext($_target, $context);
+        $swap = $this->bind->get($hash);
+
+        if ($swap === null) {
+            throw new \Exception(\sprintf(
+                'Target [%s] is not instantiable.',
+                $_target
+            ));
+        }
+
+        if (\is_object($swap)) {
+            if ($swap instanceof \Closure) {
+                return $swap->__invoke(...$args);
+            }
+            return $swap;
+        }
+
+        if (!\class_exists($swap, true)) {
+            throw new \Exception(\sprintf(
+                'class "%s" not found',
+                $swap
+            ));
+        }
+
+        return new $swap(...$args);
+    }
 }
