@@ -7,21 +7,25 @@ namespace Inilim\DI;
 use Inilim\DI\Classic\DIClassic;
 use Inilim\DI\Primitive\DIPrimitive;
 use Inilim\DI\Singleton\DISingleton;
+use Inilim\DI\Swap\DISwap;
 
 final class DI
 {
     protected DIClassic $classic;
     protected DIPrimitive $primitive;
     protected DISingleton $singleton;
+    protected DISwap $swap;
 
     function __construct(
         DIClassic $classic,
         DIPrimitive $primitive,
-        DISingleton $singleton
+        DISingleton $singleton,
+        DISwap $swap
     ) {
         $this->classic   = $classic;
         $this->primitive = $primitive;
         $this->singleton = $singleton;
+        $this->swap      = $swap;
     }
 
     /**
@@ -32,7 +36,7 @@ final class DI
      */
     function __invoke(string $abstract, $context = null, ...$args): object
     {
-        return $this->classic->get($abstract, $context, ...$args);
+        return $this->getSwapClass($abstract, $context, ...$args) ?? $this->classic->get($abstract, $context, ...$args);
     }
 
     /**
@@ -43,7 +47,7 @@ final class DI
      */
     function primitive(string $key, $context = null, $default = null)
     {
-        return $this->primitive->get($key, $context, $default);
+        return $this->swap->getPrimitive($key, $context) ?? $this->primitive->get($key, $context, $default);
     }
 
     /**
@@ -53,6 +57,14 @@ final class DI
      */
     function singleton(string $abstract): object
     {
-        return $this->singleton->get($abstract);
+        return $this->getSwapClass($abstract) ?? $this->singleton->get($abstract);
+    }
+
+    protected function getSwapClass(string $abstract, $context = null, ...$args): ?object
+    {
+        if (!$this->swap->hasBindClass()) {
+            return null;
+        }
+        return $this->swap->getClass($abstract, $context, ...$args);
     }
 }

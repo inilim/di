@@ -16,18 +16,34 @@ final class DISwap
         $this->bind = $bind;
     }
 
-    function get(string $target, $context = null, ...$args): object
+    function hasBindClass(): bool
+    {
+        return $this->bind->hasBindClass();
+    }
+
+    function hasBindPrimitive(): bool
+    {
+        return $this->bind->hasBindPrimitive();
+    }
+
+    /**
+     * @param null|class-string|class-string[] $context
+     * @return mixed
+     */
+    function getPrimitive(string $key, $context = null)
+    {
+        return $this->bind->getPrimitive(Hash::getWithContext($key, $context));
+    }
+
+    function getClass(string $target, $context = null, ...$args): ?object
     {
         $_target = \ltrim($target, '\\');
 
         $hash = Hash::getWithContext($_target, $context);
-        $swap = $this->bind->get($hash);
+        $swap = $this->bind->getClass($hash);
 
         if ($swap === null) {
-            throw new \Exception(\sprintf(
-                'Target [%s] is not instantiable.',
-                $_target
-            ));
+            return null;
         }
 
         if (\is_object($swap)) {
