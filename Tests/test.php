@@ -1,16 +1,12 @@
 <?php
 
+require_once __DIR__ . '/awkd.php';
 require_once '../vendor/autoload.php';
 
 use Inilim\Dump\Dump;
 
+use Abstract\_2\_3\FakeI;
+
 Dump::init();
 
-interface Test {}
-abstract class TestClass {}
-
-$a = Test::class;
-$b = TestClass::class;
-
-dd(\class_exists($a, true));
-dd(\class_exists($b, true));
+DI();

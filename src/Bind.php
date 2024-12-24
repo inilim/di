@@ -1,39 +1,64 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Inilim\DI;
 
-use Inilim\DI\Swap\Bind as SwapBind;
-use Inilim\DI\Classic\Bind as ClassicBind;
-use Inilim\DI\Primitive\Bind as PrimitiveBind;
-use Inilim\DI\Singleton\Bind as SingletonBind;
+use Inilim\DI\Hash;
 
 final class Bind
 {
-    protected ClassicBind $classic;
-    protected PrimitiveBind $primitive;
-    protected SingletonBind $singleton;
-    protected SwapBind $swap;
+    /** @var ?array */
+    protected $mapSingleton = null;
+    /** @var ?array<string,class-string|object|\Closure> */
+    protected $mapClass = null;
+    /** @var ?array */
+    protected $mapSwap = null;
 
-    function __construct(
-        ClassicBind $classic,
-        PrimitiveBind $primitive,
-        SingletonBind $singleton,
-        SwapBind $swap
-    ) {
-        $this->classic   = $classic;
-        $this->primitive = $primitive;
-        $this->singleton = $singleton;
-        $this->swap      = $swap;
+    /**
+     * @param class-string $abstract contract/interface OR realization/implementation
+     * @param class-string|object|\Closure|null $concrete
+     * @param null|class-string|class-string[] $context
+     */
+    function class(string $abstract, $concrete = null, $context = null): void
+    {
+        $abstract = \ltrim($abstract, '\\');
+        $_context = \is_array($context) ? $context : [$context];
+
+        $this->mapClass ??= [];
+
+        foreach ($_context as $c) {
+            $this->mapClass[Hash::getAbstract($abstract, $c)] = $concrete ?? $abstract;
+        }
     }
 
     /**
-     * @param non-empty-string $key
-     * @param mixed $swap return value
+     * @param class-string $abstract contract/interface OR realization/implementation
+     * @param class-string|object|\Closure|null $concrete
      * @param null|class-string|class-string[] $context
      */
-    function swap(string $key, $swap, $context = null): self
+    function singleton(string $abstract, $concrete = null, $context = null): void
     {
-        $this->swap->bind($key, $swap, $context);
-        return $this;
+        $abstract = \ltrim($abstract, '\\');
+        $_context = \is_array($context) ? $context : [$context];
+
+        $this->mapSingleton ??= [];
+
+        foreach ($_context as $c) {
+            $this->mapSingleton[Hash::getAbstract($abstract, $c)] = $concrete ?? $abstract;
+        }
+    }
+
+    /**
+     * @param class-string $target contract/interface OR realization/implementation
+     * @param class-string|object|\Closure $swap
+     */
+    function swap(string $target, $swap): void
+    {
+        $target = \ltrim($target, '\\');
+
+        $this->mapSwap ??= [];
+
+        $this->mapSwap[Hash::getAbstract($target, null)] = $swap;
     }
 }

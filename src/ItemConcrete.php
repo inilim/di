@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Inilim\DI;
 
 /**
  * @psalm-readonly
+ * @internal 
  */
 final class ItemConcrete
 {

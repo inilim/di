@@ -1,23 +1,40 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Inilim\DI;
 
+/**
+ * @internal
+ * @psalm-type HashStr = string
+ */
 final class Hash
 {
     /**
-     * @param non-empty-string $key
+     * @param non-empty-string $str
      * @param null|class-string|object $context
+     * @return HashStr
      */
-    static function getWithContext(string $str, $context): string
+    static function get(string $str, $context): string
     {
         if (\is_object($context)) {
-            $_context = \get_class($context);
+            $context = \get_class($context);
         } elseif (\is_string($context)) {
-            $_context = \ltrim($context, '\\');
+            $context = \ltrim($context, '\\');
         } else {
-            $_context = '';
+            $context = '';
         }
 
-        return \md5($str . '|' . $_context);
+        return \md5($str . '|' . $context);
+    }
+
+    /**
+     * @param class-string $abstract
+     * @param null|class-string|object $context
+     * @return HashStr
+     */
+    static function getAbstract(string $abstract, $context): string
+    {
+        return self::get(\ltrim($abstract, '\\'), $context);
     }
 }
