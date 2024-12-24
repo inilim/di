@@ -17,7 +17,7 @@ final class Bind
 
     /**
      * @param class-string $abstract contract/interface OR realization/implementation
-     * @param class-string|object|\Closure|null $concrete
+     * @param null|class-string|object|\Closure():object $concrete
      * @param null|class-string|class-string[] $context
      */
     function class(string $abstract, $concrete = null, $context = null): void
