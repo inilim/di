@@ -6,8 +6,6 @@ namespace Inilim\DI;
 
 final class DI
 {
-
-
     function __construct()
     {
         // 

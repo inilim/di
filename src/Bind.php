@@ -8,11 +8,11 @@ use Inilim\DI\Hash;
 
 final class Bind
 {
-    /** @var ?array */
-    protected $mapSingleton = null;
-    /** @var ?array<string,class-string|object|\Closure> */
+    /** @var ?array<string,class-string|object|\Closure():object> */
     protected $mapClass = null;
-    /** @var ?array */
+    /** @var ?array<string,class-string|object|\Closure():object> */
+    protected $mapSingleton = null;
+    /** @var ?array<string,class-string|object|\Closure():object> */
     protected $mapSwap = null;
 
     /**
@@ -34,7 +34,7 @@ final class Bind
 
     /**
      * @param class-string $abstract contract/interface OR realization/implementation
-     * @param class-string|object|\Closure|null $concrete
+     * @param null|class-string|object|\Closure():object $concrete
      * @param null|class-string|class-string[] $context
      */
     function singleton(string $abstract, $concrete = null, $context = null): void
@@ -51,7 +51,7 @@ final class Bind
 
     /**
      * @param class-string $target contract/interface OR realization/implementation
-     * @param class-string|object|\Closure $swap
+     * @param class-string|object|\Closure():object $swap
      */
     function swap(string $target, $swap): void
     {
