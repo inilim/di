@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Inilim\DI;
 
 /**
- * @internal
+ * @internal \Inilim\DI
+ * @psalm-internal \Inilim\DI
  * @psalm-type HashStr = string
  */
 final class Hash
