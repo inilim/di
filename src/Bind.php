@@ -11,11 +11,11 @@ final class Bind
 {
     use SimpleSingleton;
 
-    /** @var ?array<string,class-string|object|\Closure():object> */
+    /** @var ?array<string,class-string|object|\Closure(Bind, mixed[]):object> */
     protected $mapClass = null;
-    /** @var ?array<string,class-string|object|\Closure():object> */
+    /** @var ?array<string,class-string|object|\Closure(Bind, mixed[]):object> */
     protected $mapSingleton = null;
-    /** @var ?array<string,class-string|object|\Closure():object> */
+    /** @var ?array<string,class-string|object|\Closure(Bind, mixed[]):object> */
     protected $mapSwap = null;
 
     /**
@@ -41,7 +41,7 @@ final class Bind
     /**
      * @param class-string $abstract contract/interface OR realization/implementation
      * @param null|class-string|object $context
-     * @return null|class-string|object|\Closure():object
+     * @return null|class-string|object|\Closure(Bind, mixed[]):object
      */
     // function get(string $abstract, $context = null)
     // {
@@ -59,10 +59,11 @@ final class Bind
 
     /**
      * @param class-string $abstract contract/interface OR realization/implementation
-     * @param null|class-string|object|\Closure():object $concrete
+     * @param null|class-string|object|\Closure(Bind, mixed[]):object $concrete
      * @param null|class-string|class-string[] $context
+     * @return self
      */
-    function class(string $abstract, $concrete = null, $context = null): void
+    function class(string $abstract, $concrete = null, $context = null)
     {
         $abstract = \ltrim($abstract, '\\');
         $_context = \is_array($context) ? $context : [$context];
@@ -72,14 +73,32 @@ final class Bind
         foreach ($_context as $c) {
             $this->mapClass[Hash::getAbstract($abstract, $c)] = $concrete ?? $abstract;
         }
+
+        return $this;
     }
 
     /**
      * @param class-string $abstract contract/interface OR realization/implementation
-     * @param null|class-string|object|\Closure():object $concrete
+     * @param null|class-string|object|\Closure(Bind, mixed[]):object $concrete
      * @param null|class-string|class-string[] $context
+     * @return self
      */
-    function singleton(string $abstract, $concrete = null, $context = null): void
+    function classIf(string $abstract, $concrete = null, $context = null)
+    {
+        if ($this->mapClass === null || !isset($this->mapClass[Hash::getAbstract($abstract, $context)])) {
+            return $this->class($abstract, $concrete, $context);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param class-string $abstract contract/interface OR realization/implementation
+     * @param null|class-string|object|\Closure(Bind, mixed[]):object $concrete
+     * @param null|class-string|class-string[] $context
+     * @return self
+     */
+    function singleton(string $abstract, $concrete = null, $context = null)
     {
         $abstract = \ltrim($abstract, '\\');
         $_context = \is_array($context) ? $context : [$context];
@@ -89,19 +108,39 @@ final class Bind
         foreach ($_context as $c) {
             $this->mapSingleton[Hash::getAbstract($abstract, $c)] = $concrete ?? $abstract;
         }
+
+        return $this;
+    }
+
+    /**
+     * @param class-string $abstract contract/interface OR realization/implementation
+     * @param null|class-string|object|\Closure(Bind, mixed[]):object $concrete
+     * @param null|class-string|class-string[] $context
+     * @return self
+     */
+    function singletonIf(string $abstract, $concrete = null, $context = null)
+    {
+        if ($this->mapSingleton === null || !isset($this->mapSingleton[Hash::getAbstract($abstract, $context)])) {
+            return $this->singleton($abstract, $concrete, $context);
+        }
+
+        return $this;
     }
 
     /**
      * @param class-string $target contract/interface OR realization/implementation
-     * @param class-string|object|\Closure():object $swap
+     * @param class-string|object|\Closure(Bind, mixed[]):object $swap
+     * @return self
      */
-    function swap(string $target, $swap): void
+    function swap(string $target, $swap)
     {
         $target = \ltrim($target, '\\');
 
         $this->mapSwap ??= [];
 
         $this->mapSwap[Hash::getAbstract($target, null)] = $swap;
+
+        return $this;
     }
 
     // ------------------------------------------------------------------
@@ -109,7 +148,7 @@ final class Bind
     // ------------------------------------------------------------------
 
     /**
-     * @param class-string|object|\Closure():object $concrete
+     * @param class-string|object|\Closure(Bind, mixed[]):object $concrete
      * @param mixed[] $args
      * @return object
      */
@@ -120,7 +159,7 @@ final class Bind
         }
 
         if ($concrete instanceof \Closure) {
-            return $concrete->__invoke(...$args);
+            return $concrete->__invoke($this, $args);
         }
 
         return $concrete;

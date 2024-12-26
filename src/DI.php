@@ -24,10 +24,6 @@ final class DI
      */
     function get(string $abstract, $context = null, array $args = [])
     {
-        $obj = $this->bind->resolveAndGet($abstract, $context, $args);
-        if ($obj === null) {
-            throw new \InvalidArgumentException();
-        }
-        return $obj;
+        return $this->bind->resolveAndGet($abstract, $context, $args) ?? new $abstract(...$args);
     }
 }
