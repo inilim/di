@@ -7,7 +7,7 @@ namespace Inilim\DI;
 /**
  * @internal \Inilim\DI
  * @psalm-internal \Inilim\DI
- * @psalm-type HashStr = string
+ * @psalm-type HashStr = non-empty-string
  */
 final class Hash
 {

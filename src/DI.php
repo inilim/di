@@ -24,6 +24,6 @@ final class DI
      */
     function get(string $abstract, $context = null, array $args = [])
     {
-        return $this->bind->resolveAndGet($abstract, $context, $args) ?? new $abstract(...$args);
+        return $this->bind->get($abstract, $context, $args) ?? new $abstract(...$args);
     }
 }
