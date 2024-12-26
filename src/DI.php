@@ -6,14 +6,17 @@ namespace Inilim\DI;
 
 use Inilim\DI\Bind;
 
+/**
+ * @api
+ */
 final class DI
 {
     /** @var Bind */
     protected $bind;
 
-    function __construct(Bind $bind)
+    function __construct()
     {
-        $this->bind = $bind;
+        $this->bind = Bind::self();
     }
 
     /**
@@ -22,8 +25,8 @@ final class DI
      * @param mixed[] $args
      * @return object
      */
-    function get(string $abstract, $context = null, array $args = [])
+    function getByAbstract(string $abstract, $context = null, array $args = [])
     {
-        return $this->bind->get($abstract, $context, $args) ?? new $abstract(...$args);
+        return $this->bind->getByAbstract($abstract, $context, $args) ?? new $abstract(...$args);
     }
 }

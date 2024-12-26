@@ -9,6 +9,7 @@ use Inilim\DI\ItemBind;
 use Inilim\Singleton\SimpleSingleton;
 
 /**
+ * @api
  * @psalm-type Concrete = class-string|object|\Closure(Bind,mixed[]):object
  */
 final class Bind
@@ -32,13 +33,13 @@ final class Bind
      * @param mixed[] $args
      * @return null|object
      */
-    function get(string $abstract, $context = null, array $args = [])
+    function getByAbstract(string $abstract, $context = null, array $args = [])
     {
-        $hash = Hash::getAbstract($abstract, $context);
-        $item = $this->find(self::KEY_SWAP, $hash)
-            ?? $this->find(self::KEY_CLASSIC, $hash)
-            ?? $this->find(self::KEY_CLASSIC, $hash);
-        /** @var ?ItemBind $item */
+        $item = $this->find([
+            self::KEY_SWAP,
+            self::KEY_CLASSIC,
+            self::KEY_CLASSIC,
+        ], Hash::get($abstract, $context));
 
         return $item
             ? $item->resolveAndGetConcrete($args)
@@ -53,16 +54,20 @@ final class Bind
      */
     function getByTag(string $tag, $context = null, array $args = [])
     {
-        $hash = Hash::get($tag, $context);
-        $item = $this->find(self::KEY_SWAP_TAG, $hash)
-            ?? $this->find(self::KEY_CLASSIC_TAG, $hash)
-            ?? $this->find(self::KEY_SINGLETON_TAG, $hash);
-        /** @var ?ItemBind $item */
+        $item = $this->find([
+            self::KEY_SWAP_TAG,
+            self::KEY_CLASSIC_TAG,
+            self::KEY_SINGLETON_TAG,
+        ], Hash::get($tag, $context));
 
         return $item
             ? $item->resolveAndGetConcrete($args)
             : null;
     }
+
+    // ---------------------------------------------
+    // 
+    // ---------------------------------------------
 
     /**
      * @param class-string $abstract contract/interface OR realization/implementation
@@ -96,19 +101,7 @@ final class Bind
      */
     function classIf(string $abstract, $concrete = null, $context = null)
     {
-        $contextFiltered = [];
-        foreach (
-            (\is_array($context) ? $context : [$context]) as $c
-        ) {
-            if (!isset($this->map[self::KEY_CLASSIC][Hash::getAbstract($abstract, $c)])) {
-                $contextFiltered[] = $c;
-            }
-        }
-
-        if ($contextFiltered) {
-            $this->bind(self::KEY_CLASSIC, $abstract, $concrete, $contextFiltered);
-        }
-
+        $this->bindIf(self::KEY_CLASSIC, $abstract, $concrete, $context);
         return $this;
     }
 
@@ -144,19 +137,7 @@ final class Bind
      */
     function singletonIf(string $abstract, $concrete = null, $context = null)
     {
-        $contextFiltered = [];
-        foreach (
-            (\is_array($context) ? $context : [$context]) as $c
-        ) {
-            if (!isset($this->map[self::KEY_SINGLETON][Hash::getAbstract($abstract, $c)])) {
-                $contextFiltered[] = $c;
-            }
-        }
-
-        if ($contextFiltered) {
-            $this->bind(self::KEY_SINGLETON, $abstract, $concrete, $contextFiltered);
-        }
-
+        $this->bindIf(self::KEY_SINGLETON, $abstract, $concrete, $context);
         return $this;
     }
 
@@ -187,17 +168,21 @@ final class Bind
     // ------------------------------------------------------------------
 
     /**
-     * @param Bind::KEY_* $type
+     * @param (self::KEY_*)|non-empty-list<(self::KEY_*)> $type
      * @param non-empty-string $hash
      */
-    protected function find(string $type, string $hash): ?ItemBind
+    protected function find($type, string $hash): ?ItemBind
     {
-        if (!isset($this->map[$type])) return null;
-        return $this->map[$type][$hash] ?? null;
+        foreach ((array)$type as $t) {
+            if (isset($this->map[$t][$hash])) {
+                return $this->map[$t][$hash];
+            }
+        }
+        return null;
     }
 
     /**
-     * @param Bind::KEY_* $type
+     * @param self::KEY_* $type
      * @param class-string|non-empty-string $abstractOrTag
      * @param null|Concrete $concrete
      * @param null|class-string|class-string[] $context
@@ -211,19 +196,15 @@ final class Bind
         $this->map[$type] ??= [];
 
         $item  = new ItemBind($abstractOrTag, $type, $concrete);
-        $isTag = $item->isTag();
         foreach (
             (\is_array($context) ? $context : [$context]) as $c
         ) {
-            $hash = $isTag
-                ? Hash::get($abstractOrTag, $c)
-                : Hash::getAbstract($abstractOrTag, $c);
-            $this->map[$type][$hash] = $item;
+            $this->map[$type][Hash::get($abstractOrTag, $c)] = $item;
         }
     }
 
     /**
-     * @param Bind::KEY_* $type
+     * @param self::KEY_* $type
      * @param class-string|non-empty-string $abstractOrTag
      * @param null|Concrete $concrete
      * @param null|class-string|class-string[] $context
@@ -234,16 +215,11 @@ final class Bind
         $concrete = null,
         $context = null
     ): void {
-        $isTag           = !\in_array($type, [BIND::KEY_CLASSIC, BIND::KEY_SINGLETON, BIND::KEY_SWAP], true);
         $contextFiltered = [];
         foreach (
             (\is_array($context) ? $context : [$context]) as $c
         ) {
-            $hash = $isTag
-                ? Hash::get($abstractOrTag, $c)
-                : Hash::getAbstract($abstractOrTag, $c);
-
-            if (!isset($this->map[$type][$hash])) {
+            if (!isset($this->map[$type][Hash::get($abstractOrTag, $c)])) {
                 $contextFiltered[] = $c;
             }
         }

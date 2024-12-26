@@ -14,7 +14,7 @@ if (!\function_exists('DI')) {
     function DI(string $dep, $args_or_context = null, $context = null)
     {
         static $o = null;
-        $o ??= new DI(Bind::self());
+        $o ??= new DI;
 
         $args = [];
         if (\is_array($args_or_context)) {
@@ -23,6 +23,6 @@ if (!\function_exists('DI')) {
             $context = $args_or_context;
         }
 
-        return $o->get($dep, $context, $args);
+        return $o->getByAbstract($dep, $context, $args);
     }
 }

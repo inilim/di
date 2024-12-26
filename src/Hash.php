@@ -7,16 +7,15 @@ namespace Inilim\DI;
 /**
  * @internal \Inilim\DI
  * @psalm-internal \Inilim\DI
- * @psalm-type HashStr = non-empty-string
  */
 final class Hash
 {
     /**
-     * @param non-empty-string $str
+     * @param non-empty-string $string
      * @param null|class-string|object $context
-     * @return HashStr
+     * @return non-empty-string
      */
-    static function get(string $str, $context): string
+    static function get(string $string, $context): string
     {
         if (\is_object($context)) {
             $context = \get_class($context);
@@ -26,16 +25,6 @@ final class Hash
             $context = '';
         }
 
-        return \md5($str . '|' . $context);
-    }
-
-    /**
-     * @param class-string $abstract
-     * @param null|class-string|object $context
-     * @return HashStr
-     */
-    static function getAbstract(string $abstract, $context): string
-    {
-        return self::get(\ltrim($abstract, '\\'), $context);
+        return \md5($string . '|' . $context);
     }
 }
