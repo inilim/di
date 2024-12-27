@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Inilim\DI;
 
+use Inilim\DI\DI;
 use Inilim\DI\Bind;
 
 /**
@@ -95,7 +96,7 @@ final class ItemBind
     }
 
     /**
-     * @param class-string|object|\Closure(Bind, mixed[]):object $concrete
+     * @param class-string|object|\Closure(DI, mixed[]):object $concrete
      * @param mixed[] $args
      * @return object
      */
@@ -106,7 +107,7 @@ final class ItemBind
         }
 
         if ($concrete instanceof \Closure) {
-            return $concrete->__invoke($this, $args);
+            return $concrete->__invoke(DI::self(), $args);
         }
 
         return $concrete;

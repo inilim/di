@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Inilim\DI;
 
+use Inilim\DI\DI;
 use Inilim\DI\Hash;
 use Inilim\DI\ItemBind;
 use Inilim\Singleton\SimpleSingleton;
 
 /**
  * @api
- * @psalm-type Concrete = class-string|object|\Closure(Bind,mixed[]):object
+ * @psalm-type Concrete = class-string|object|\Closure(DI,mixed[]):object
  */
 final class Bind
 {
