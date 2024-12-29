@@ -65,14 +65,6 @@ final class ItemBind
     }
 
     /**
-     * @return null|class-string|object|\Closure(Bind, mixed[]):object
-     */
-    function getConcrete()
-    {
-        return $this->concrete;
-    }
-
-    /**
      * @param mixed[] $args
      * @return object
      */
@@ -88,11 +80,6 @@ final class ItemBind
         } else {
             return $this->resolve($this->concrete, $args);
         }
-    }
-
-    function isTag(): bool
-    {
-        return $this->isTag;
     }
 
     /**

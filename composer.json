@@ -1,29 +1,35 @@
 {
-  "name": "inilim/di",
-  "description": "di",
-  "type": "library",
-  "license": "MIT",
-  "autoload": {
-    "psr-4": {
-      "Inilim\\DI\\": "src/"
+    "name": "inilim/di",
+    "description": "di",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Inilim\\DI\\": "src/"
+        },
+        "files": [
+            "function.php"
+        ]
     },
-    "files": [
-      "function.php"
-    ]
-  },
-  "authors": [
-    {
-      "name": "inilim"
+    "autoload-dev": {
+        "psr-4": {
+            "Inilim\\Test\\": "Tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "inilim"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "inilim/singleton": "dev-main"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require-dev": {
+        "phpstan/phpstan": "@stable",
+        "inilim/dump": "dev-main",
+        "phpunit/phpunit": "^11.5"
     }
-  ],
-  "require": {
-    "php": ">=7.4",
-    "inilim/singleton": "dev-main"
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true,
-  "require-dev": {
-    "phpstan/phpstan": "@stable",
-    "inilim/dump": "dev-main"
-  }
 }

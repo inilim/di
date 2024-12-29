@@ -39,7 +39,7 @@ final class Bind
         $item = $this->find([
             self::KEY_SWAP,
             self::KEY_CLASSIC,
-            self::KEY_CLASSIC,
+            self::KEY_SINGLETON,
         ], Hash::get($abstract, $context));
 
         return $item
@@ -145,22 +145,24 @@ final class Bind
     /**
      * @param class-string $target contract/interface OR realization/implementation
      * @param Concrete $swap
+     * @param null|class-string|class-string[] $context
      * @return self
      */
-    function swap(string $target, $swap)
+    function swap(string $target, $swap, $context = null)
     {
-        $this->bind(self::KEY_SWAP, $target, $swap, null);
+        $this->bind(self::KEY_SWAP, $target, $swap, $context);
         return $this;
     }
 
     /**
      * @param non-empty-string $target
      * @param Concrete $swap
+     * @param null|class-string|class-string[] $context
      * @return self
      */
-    function swapTag(string $target, $swap)
+    function swapTag(string $target, $swap, $context = null)
     {
-        $this->bind(self::KEY_SWAP_TAG, $target, $swap, null);
+        $this->bind(self::KEY_SWAP_TAG, $target, $swap, $context);
         return $this;
     }
 

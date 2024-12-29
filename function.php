@@ -1,7 +1,6 @@
 <?php
 
 use Inilim\DI\DI;
-use Inilim\DI\Bind;
 
 if (!\function_exists('DI')) {
     /**
@@ -19,10 +18,33 @@ if (!\function_exists('DI')) {
         $args = [];
         if (\is_array($argsOrContext)) {
             $args = $argsOrContext;
-        } else {
+        } elseif (\is_string($argsOrContext)) {
             $context = $argsOrContext;
         }
 
         return $o->getByAbstract($dep, $context, $args);
+    }
+}
+
+if (!\function_exists('DITag')) {
+    /**
+     * @param non-empty-string $tag
+     * @param null|class-string|object|mixed[] $argsOrContext array is args else context
+     * @param null|class-string|object $context
+     * @return ?object
+     */
+    function DITag(string $tag, $argsOrContext = null, $context = null)
+    {
+        static $o = null;
+        $o ??= DI::self();
+
+        $args = [];
+        if (\is_array($argsOrContext)) {
+            $args = $argsOrContext;
+        } else {
+            $context = $argsOrContext;
+        }
+
+        return $o->getByTag($tag, $context, $args);
     }
 }
