@@ -18,7 +18,7 @@ if (!\function_exists('DI')) {
         $args = [];
         if (\is_array($argsOrContext)) {
             $args = $argsOrContext;
-        } elseif (\is_string($argsOrContext)) {
+        } else {
             $context = $argsOrContext;
         }
 

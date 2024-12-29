@@ -7,6 +7,9 @@ use Inilim\Test\Concrete;
 use Inilim\Test\TestCase;
 use Inilim\Test\IAbstract;
 
+/**
+ * TODO !!!!
+ */
 class DITest extends TestCase
 {
     // без контекста без абстрации
