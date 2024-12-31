@@ -5,12 +5,12 @@ use Inilim\DI\DI;
 if (!\function_exists('DI')) {
     /**
      * @template T of object
-     * @param class-string $dep
+     * @param class-string<T> $dependence
      * @param null|class-string|object|mixed[] $argsOrContext array is args else context
      * @param null|class-string|object $context
      * @return T
      */
-    function DI(string $dep, $argsOrContext = null, $context = null)
+    function DI(string $dependence, $argsOrContext = null, $context = null)
     {
         static $o = null;
         $o ??= DI::self();
@@ -22,7 +22,7 @@ if (!\function_exists('DI')) {
             $context = $argsOrContext;
         }
 
-        return $o->getByAbstract($dep, $context, $args);
+        return $o->getByAbstract($dependence, $context, $args);
     }
 }
 

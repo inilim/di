@@ -1,8 +1,8 @@
 <?php
 
-namespace Inilim\Test;
+namespace Inilim\Test\Other;
 
-class ConcreteSingleton
+class Concrete
 {
     var $prop1;
     var $prop2;

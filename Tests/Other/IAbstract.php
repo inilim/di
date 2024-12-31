@@ -1,5 +1,5 @@
 <?php
 
-namespace Inilim\Test;
+namespace Inilim\Test\Other;
 
 interface IAbstract {}

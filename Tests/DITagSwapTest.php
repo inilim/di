@@ -2,9 +2,9 @@
 
 use Inilim\DI\DI;
 use Inilim\DI\Bind;
-use Inilim\Test\Context;
-use Inilim\Test\Concrete;
-use Inilim\Test\ConcreteSwap;
+use Inilim\Test\Other\Context;
+use Inilim\Test\Other\Concrete;
+use Inilim\Test\Other\ConcreteSwap;
 use Inilim\Test\TestCase;
 
 class DITagSwapTest extends TestCase

@@ -2,10 +2,12 @@
 
 use Inilim\DI\DI;
 use Inilim\DI\Bind;
-use Inilim\Test\Context;
-use Inilim\Test\Concrete;
+use Inilim\Test\Other\Context;
+use Inilim\Test\Other\Concrete;
+use Inilim\Test\Other\IAbstract;
 use Inilim\Test\TestCase;
-use Inilim\Test\IAbstract;
+
+use function PHPUnit\Framework\assertNotInstanceOf;
 
 /**
  * TODO !!!!
@@ -43,6 +45,9 @@ class DITest extends TestCase
         $arg5 = new \stdClass;
         $args = [1000, 'string', 0.2000, [1, 2, 3], $arg5];
 
+        // если не биндим, то создаем как make
+        Bind::self()->class(Concrete::class);
+
         $this->assertInstanceOf(Concrete::class, DI(Concrete::class, $args));
         $this->assertInstanceOf(Concrete::class, DI(Concrete::class, $args, Context::class));
         $a = DI(Concrete::class, $args);
@@ -52,6 +57,29 @@ class DITest extends TestCase
             spl_object_hash($b),
         );
         $this->assertEquals($args, array_values((array)$a));
+        $c = DI(Concrete::class);
+        $this->assertNotEquals($args, array_values((array)$c));
+
+        // ---------------------------------------------
+        // без bind
+        // ---------------------------------------------
+
+        self::clearBindMap();
+
+        // если не биндим, то создаем как make
+        // Bind::self()->class(Concrete::class);
+
+        $this->assertInstanceOf(Concrete::class, DI(Concrete::class, $args));
+        $this->assertInstanceOf(Concrete::class, DI(Concrete::class, $args, Context::class));
+        $a = DI(Concrete::class, $args);
+        $b = DI(Concrete::class, $args);
+        $this->assertNotEquals(
+            spl_object_hash($a),
+            spl_object_hash($b),
+        );
+        $this->assertEquals($args, array_values((array)$a));
+        $c = DI(Concrete::class);
+        $this->assertNotEquals($args, array_values((array)$c));
     }
     // function test_bind_closure__without_context_and_abstract(): void {}
     // function test_bind_object__without_context_and_abstract(): void {}

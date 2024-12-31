@@ -1,6 +1,6 @@
 <?php
 
-namespace Inilim\Test;
+namespace Inilim\Test\Other;
 
 class ConcreteSwap
 {
