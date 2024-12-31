@@ -49,7 +49,7 @@ final class ItemBind
         $concrete = null
     ) {
         $this->type        = $type;
-        $this->isTag       = !\in_array($type, [BIND::KEY_CLASSIC, BIND::KEY_SINGLETON, BIND::KEY_SWAP], true);
+        $this->isTag       = !\in_array($type, [BIND::KEY_CLASS, BIND::KEY_SINGLETON, BIND::KEY_SWAP], true);
         $this->isSingleton = \in_array($type, [BIND::KEY_SINGLETON, BIND::KEY_SINGLETON_TAG], true);
 
         if ($this->isTag) {

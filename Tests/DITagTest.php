@@ -138,48 +138,6 @@ class DITagTest extends TestCase
         $this->assertNotEquals(\spl_object_hash($o1), \spl_object_hash($o2));
     }
 
-    function test_via_object_without_context(): void
-    {
-        self::clearBindMap();
-
-        $objDep = new Concrete;
-        Bind::self()->classTag('tagName', $objDep);
-
-        $objTag = DITag('tagName');
-        /** @var Concrete $objTag */
-
-        $this->assertInstanceOf(Concrete::class, $objTag);
-        $this->assertEquals(\spl_object_hash($objDep), \spl_object_hash($objTag));
-        $this->assertEquals($objTag->prop1, null);
-        $this->assertEquals($objTag->prop2, null);
-        $this->assertEquals($objTag->prop3, null);
-        $this->assertEquals($objTag->prop4, null);
-        $this->assertEquals($objTag->prop5, null);
-
-        // ---------------------------------------------
-        // 
-        // ---------------------------------------------
-
-        self::clearBindMap();
-
-        $objDep = new Concrete;
-        Bind::self()->classTag('tagName', $objDep);
-
-        $arg5   = new \stdClass;
-        $args   = [1000, 'is_string', 0.2000, [1, 2, 3], $arg5];
-
-        $objTag = DITag('tagName', $args);
-        /** @var Concrete $objTag */
-
-        $this->assertInstanceOf(Concrete::class, $objTag);
-        $this->assertEquals(\spl_object_hash($objDep), \spl_object_hash($objTag));
-        $this->assertEquals($objTag->prop1, null);
-        $this->assertEquals($objTag->prop2, null);
-        $this->assertEquals($objTag->prop3, null);
-        $this->assertEquals($objTag->prop4, null);
-        $this->assertEquals($objTag->prop5, null);
-    }
-
     function test_not_bind(): void
     {
         self::clearBindMap();
