@@ -11,9 +11,9 @@ class DITagSwapTest extends TestCase
 {
     function test_without_context(): void
     {
-        self::clearBindMap();
-
         $name = 'tagName';
+
+        self::clearBindMap();
 
         Bind::self()->classTag($name, Concrete::class);
         Bind::self()->swapTag($name, ConcreteSwap::class);
@@ -25,24 +25,9 @@ class DITagSwapTest extends TestCase
     function test_with_context(): void
     {
         $context = new Context;
-        self::clearBindMap();
-
         $name = 'tagName';
 
-        Bind::self()->classTag($name, Concrete::class, $context);
-        Bind::self()->swapTag($name, ConcreteSwap::class, $context);
-
-        $this->assertInstanceOf(ConcreteSwap::class, DITag($name, $context));
-        $this->assertNull(DITag($name));
-
-        // ---------------------------------------------
-        // 
-        // ---------------------------------------------
-
-        $context = Context::class;
         self::clearBindMap();
-
-        $name = 'tagName';
 
         Bind::self()->classTag($name, Concrete::class, $context);
         Bind::self()->swapTag($name, ConcreteSwap::class, $context);

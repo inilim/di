@@ -8,10 +8,9 @@ use Inilim\Test\Other\Concrete;
 use Inilim\Test\Other\Concrete2;
 
 use Inilim\Test\Other\IAbstract;
-use function PHPUnit\Framework\assertNotInstanceOf;
 
 /**
- * TODO !!!!
+ * TODO Еще нужны тесты!!!
  */
 class DITest extends TestCase
 {
@@ -226,6 +225,51 @@ class DITest extends TestCase
     // function test_bind_closure__with_context_without_abstract(): void {}
 
     // с контекстом с абстрации
-    // function test_bind_class_string__with_context_and_abstract(): void {}
+    function test_bind_class_string__with_context_and_abstract(): void
+    {
+        // ---------------------------------------------
+        // без аргументов
+        // ---------------------------------------------
+
+        self::clearBindMap();
+
+        $args = [null, null, null, null, null];
+        Bind::self()->class(IAbstract::class, Concrete::class, Context::class);
+
+        $context = new Context;
+        $this->assertInstanceOf(Concrete::class, DI(IAbstract::class, $context));
+        $this->assertInstanceOf(Concrete::class, DI(IAbstract::class, Context::class));
+        $a = DI(IAbstract::class, $context);
+        $b = DI(IAbstract::class, Context::class);
+        $this->assertNotEquals(
+            spl_object_hash($a),
+            spl_object_hash($b),
+        );
+        $this->assertEquals($args, array_values((array)$a));
+
+        // ---------------------------------------------
+        // с аргументами
+        // ---------------------------------------------
+
+        self::clearBindMap();
+
+        $arg5 = new \stdClass;
+        $args = [1000, 'string', 0.2000, [1, 2, 3], $arg5];
+
+        Bind::self()->class(IAbstract::class, Concrete::class, Context::class);
+
+        $context = new Context;
+        $this->assertInstanceOf(Concrete::class, DI(IAbstract::class, $args, $context));
+        $this->assertInstanceOf(Concrete::class, DI(IAbstract::class, $args, Context::class));
+        $a = DI(IAbstract::class, $args, $context);
+        $b = DI(IAbstract::class, $args, Context::class);
+        $this->assertNotEquals(
+            spl_object_hash($a),
+            spl_object_hash($b),
+        );
+        $this->assertEquals($args, array_values((array)$a));
+        $c = DI(IAbstract::class, Context::class);
+        $this->assertNotEquals($args, array_values((array)$c));
+    }
     // function test_bind_closure__with_context_and_abstract(): void {}
 }

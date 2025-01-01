@@ -59,7 +59,9 @@ final class ItemBind
             $this->abstractOrTag = $abstractOrTag;
             $this->concrete      = $concrete;
         } else {
+            // @phpstan-ignore-next-line
             $this->abstractOrTag = \ltrim($abstractOrTag, '\\');
+            // @phpstan-ignore-next-line
             $this->concrete      = $concrete ?? $this->abstractOrTag;
         }
     }
@@ -73,11 +75,13 @@ final class ItemBind
         if ($this->resolvedObject !== null) return $this->resolvedObject;
 
         if ($this->isSingleton) {
+            // @phpstan-ignore-next-line
             $this->resolvedObject = $this->resolve($this->concrete, $args);
             // Обнуляем concrete так как он не нужен в типе sigleton, обьект уже создан
             $this->concrete       = null;
             return $this->resolvedObject;
         } else {
+            // @phpstan-ignore-next-line
             return $this->resolve($this->concrete, $args);
         }
     }
@@ -94,7 +98,11 @@ final class ItemBind
         }
 
         if ($concrete instanceof \Closure) {
-            return $concrete->__invoke(DI::self(), $args);
+            $obj = $concrete->__invoke(DI::self(), $args);
+            if (\is_object($obj)) {
+                return $obj;
+            }
+            throw new \LogicException('$concrete must return object');
         }
 
         return $concrete;

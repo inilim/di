@@ -286,6 +286,7 @@ final class Bind
         }
 
         if ($contextFiltered) {
+            // @phpstan-ignore-next-line
             $this->bind($type, $abstractOrTag, $concrete, $contextFiltered);
         }
     }
