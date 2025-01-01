@@ -222,18 +222,7 @@ class DITest extends TestCase
     }
 
     // с контекстом без абстрации
-    function test_bind_class_string__with_context_without_abstract(): void
-    {
-        // ---------------------------------------------
-        // без аргументов, контекста как строка
-        // ---------------------------------------------
-
-        self::clearBindMap();
-
-        $args = [null, null, null, null, null];
-        Bind::self()->class(Concrete::class, null, Context::class);
-        Bind::self()->class(Concrete2::class, null, Context::class);
-    }
+    // function test_bind_class_string__with_context_without_abstract(): void {}
     // function test_bind_closure__with_context_without_abstract(): void {}
 
     // с контекстом с абстрации

@@ -30,52 +30,15 @@ final class Bind
     /** @var array<(self::KEY_*),array<string,ItemBind>> */
     protected $map = [];
 
-    /**
-     * @param class-string $abstract contract/interface OR realization/implementation
-     * @param null|class-string|object $context
-     * @param mixed[] $args
-     * @return null|object
-     */
-    function getByAbstract(string $abstract, $context = null, array $args = [])
-    {
-        $item = $this->find([
-            self::KEY_SWAP,
-            self::KEY_CLASS,
-            self::KEY_SINGLETON,
-        ], Hash::get($abstract, $context));
-
-        return $item
-            ? $item->resolveAndGetConcrete($args)
-            : null;
-    }
-
-    /**
-     * @param non-empty-string $tag
-     * @param null|class-string|object $context
-     * @param mixed[] $args
-     * @return null|object
-     */
-    function getByTag(string $tag, $context = null, array $args = [])
-    {
-        $item = $this->find([
-            self::KEY_SWAP_TAG,
-            self::KEY_CLASS_TAG,
-            self::KEY_SINGLETON_TAG,
-        ], Hash::get($tag, $context));
-
-        return $item
-            ? $item->resolveAndGetConcrete($args)
-            : null;
-    }
-
     // ---------------------------------------------
-    // 
+    // Class
     // ---------------------------------------------
 
     /**
      * @param class-string $abstract contract/interface OR realization/implementation
      * @param null|class-string|\Closure(DI,mixed[]):object $concrete
      * @param null|class-string|class-string[] $context
+     * @throws \InvalidArgumentException
      * @return self
      */
     function class(string $abstract, $concrete = null, $context = null)
@@ -85,29 +48,14 @@ final class Bind
             return $this;
         }
 
-        throw new \LogicException();
-    }
-
-    /**
-     * @param non-empty-string $tag
-     * @param class-string|\Closure(DI,mixed[]):object $concrete
-     * @param null|class-string|class-string[] $context
-     * @return self
-     */
-    function classTag(string $tag, $concrete, $context = null)
-    {
-        if ($this->checkType($concrete)) {
-            $this->bind(self::KEY_CLASS_TAG, $tag, $concrete, $context);
-            return $this;
-        }
-
-        throw new \LogicException();
+        throw new \InvalidArgumentException();
     }
 
     /**
      * @param class-string $abstract contract/interface OR realization/implementation
      * @param null|Concrete $concrete
      * @param null|class-string|class-string[] $context
+     * @throws \InvalidArgumentException
      * @return self
      */
     function classIf(string $abstract, $concrete = null, $context = null)
@@ -117,13 +65,56 @@ final class Bind
             return $this;
         }
 
-        throw new \LogicException();
+        throw new \InvalidArgumentException();
     }
+
+    // ------------------------------------------------------------------
+    // Class Tag
+    // ------------------------------------------------------------------
+
+    /**
+     * @param non-empty-string $tag
+     * @param Concrete $concrete
+     * @param null|class-string|class-string[] $context
+     * @throws \InvalidArgumentException
+     * @return self
+     */
+    function classTagIf(string $tag, $concrete, $context = null)
+    {
+        if ($this->checkType($concrete)) {
+            $this->bindIf(self::KEY_CLASS_TAG, $tag, $concrete, $context);
+            return $this;
+        }
+
+        throw new \InvalidArgumentException();
+    }
+
+    /**
+     * @param non-empty-string $tag
+     * @param Concrete $concrete
+     * @param null|class-string|class-string[] $context
+     * @throws \InvalidArgumentException
+     * @return self
+     */
+    function classTag(string $tag, $concrete, $context = null)
+    {
+        if ($this->checkType($concrete)) {
+            $this->bind(self::KEY_CLASS_TAG, $tag, $concrete, $context);
+            return $this;
+        }
+
+        throw new \InvalidArgumentException();
+    }
+
+    // ------------------------------------------------------------------
+    // Singleton
+    // ------------------------------------------------------------------
 
     /**
      * @param class-string $abstract contract/interface OR realization/implementation
      * @param null|ConcreteAll $concrete
      * @param null|class-string|class-string[] $context
+     * @throws \InvalidArgumentException
      * @return self
      */
     function singleton(string $abstract, $concrete = null, $context = null)
@@ -133,29 +124,14 @@ final class Bind
             return $this;
         }
 
-        throw new \LogicException();
-    }
-
-    /**
-     * @param non-empty-string $tag
-     * @param null|ConcreteAll $concrete
-     * @param null|class-string|class-string[] $context
-     * @return self
-     */
-    function singletonTag(string $tag, $concrete = null, $context = null)
-    {
-        if (\is_object($concrete) || $this->checkType($concrete)) {
-            $this->bind(self::KEY_SINGLETON_TAG, $tag, $concrete, $context);
-            return $this;
-        }
-
-        throw new \LogicException();
+        throw new \InvalidArgumentException();
     }
 
     /**
      * @param class-string $abstract contract/interface OR realization/implementation
      * @param null|ConcreteAll $concrete
      * @param null|class-string|class-string[] $context
+     * @throws \InvalidArgumentException
      * @return self
      */
     function singletonIf(string $abstract, $concrete = null, $context = null)
@@ -165,7 +141,45 @@ final class Bind
             return $this;
         }
 
-        throw new \LogicException();
+        throw new \InvalidArgumentException();
+    }
+
+    // ------------------------------------------------------------------
+    // Singleton Tag
+    // ------------------------------------------------------------------
+
+    /**
+     * @param non-empty-string $tag
+     * @param null|ConcreteAll $concrete
+     * @param null|class-string|class-string[] $context
+     * @throws \InvalidArgumentException
+     * @return self
+     */
+    function singletonTag(string $tag, $concrete = null, $context = null)
+    {
+        if (\is_object($concrete) || $this->checkType($concrete)) {
+            $this->bind(self::KEY_SINGLETON_TAG, $tag, $concrete, $context);
+            return $this;
+        }
+
+        throw new \InvalidArgumentException();
+    }
+
+    /**
+     * @param non-empty-string $tag
+     * @param null|ConcreteAll $concrete
+     * @param null|class-string|class-string[] $context
+     * @throws \InvalidArgumentException
+     * @return self
+     */
+    function singletonTagIf(string $tag, $concrete = null, $context = null)
+    {
+        if (\is_object($concrete) || $this->checkType($concrete)) {
+            $this->bindIf(self::KEY_SINGLETON_TAG, $tag, $concrete, $context);
+            return $this;
+        }
+
+        throw new \InvalidArgumentException();
     }
 
     // ------------------------------------------------------------------
@@ -176,6 +190,7 @@ final class Bind
      * @param class-string $target contract/interface OR realization/implementation
      * @param ConcreteAll $swap
      * @param null|class-string|class-string[] $context
+     * @throws \InvalidArgumentException
      * @return self
      */
     function swap(string $target, $swap, $context = null)
@@ -185,13 +200,14 @@ final class Bind
             return $this;
         }
 
-        throw new \LogicException();
+        throw new \InvalidArgumentException();
     }
 
     /**
      * @param non-empty-string $target
      * @param ConcreteAll $swap
      * @param null|class-string|class-string[] $context
+     * @throws \InvalidArgumentException
      * @return self
      */
     function swapTag(string $target, $swap, $context = null)
@@ -201,7 +217,7 @@ final class Bind
             return $this;
         }
 
-        throw new \LogicException();
+        throw new \InvalidArgumentException();
     }
 
     // ------------------------------------------------------------------
@@ -233,7 +249,7 @@ final class Bind
      */
     protected function bind(
         $type,
-        string $abstractOrTag,
+        $abstractOrTag,
         $concrete = null,
         $context = null
     ) {
@@ -256,7 +272,7 @@ final class Bind
      */
     protected function bindIf(
         $type,
-        string $abstractOrTag,
+        $abstractOrTag,
         $concrete = null,
         $context = null
     ) {
@@ -281,5 +297,43 @@ final class Bind
     protected function checkType($value)
     {
         return $value === null || \is_string($value) || $value instanceof \Closure;
+    }
+
+    /**
+     * @param class-string $abstract contract/interface OR realization/implementation
+     * @param null|class-string|object $context
+     * @param mixed[] $args
+     * @return null|object
+     */
+    protected function getByAbstract(string $abstract, $context = null, array $args = [])
+    {
+        $item = $this->find([
+            self::KEY_SWAP,
+            self::KEY_CLASS,
+            self::KEY_SINGLETON,
+        ], Hash::get($abstract, $context));
+
+        return $item
+            ? $item->resolveAndGetConcrete($args)
+            : null;
+    }
+
+    /**
+     * @param non-empty-string $tag
+     * @param null|class-string|object $context
+     * @param mixed[] $args
+     * @return null|object
+     */
+    protected function getByTag(string $tag, $context = null, array $args = [])
+    {
+        $item = $this->find([
+            self::KEY_SWAP_TAG,
+            self::KEY_CLASS_TAG,
+            self::KEY_SINGLETON_TAG,
+        ], Hash::get($tag, $context));
+
+        return $item
+            ? $item->resolveAndGetConcrete($args)
+            : null;
     }
 }

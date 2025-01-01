@@ -14,12 +14,18 @@ final class DI
 {
     use SimpleSingleton;
 
-    /** @var Bind */
-    protected $bind;
+    /**
+     * @var \Closure(string, mixed[]):?object
+     */
+    protected $closureBind;
 
     private function __construct()
     {
-        $this->bind = Bind::self();
+        $bind = Bind::self();
+
+        $this->closureBind = (function (string $method, array $args = []) {
+            return $this->$method(...$args);
+        })->bindTo($bind, $bind);
     }
 
     /**
@@ -30,7 +36,7 @@ final class DI
      */
     function getByAbstract(string $abstract, $context = null, array $args = [])
     {
-        return $this->bind->getByAbstract($abstract, $context, $args) ?? $this->make($abstract, $args);
+        return $this->closureBind->__invoke(__FUNCTION__, \func_get_args()) ?? $this->make($abstract, $args);
     }
 
     /**
@@ -41,16 +47,16 @@ final class DI
      */
     function getByTag(string $tag, $context = null, array $args = [])
     {
-        return $this->bind->getByTag($tag, $context, $args);
+        return $this->closureBind->__invoke(__FUNCTION__, \func_get_args());
     }
 
     /**
      * @template T of object
      * @param class-string $dep
-     * @param null|mixed[] $args array is args else context
+     * @param mixed[] $args
      * @return T
      */
-    function make(string $dep, ?array $args = null)
+    function make(string $dep, array $args = [])
     {
         return new $dep(...$args);
     }
