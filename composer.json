@@ -1,6 +1,6 @@
 {
   "name": "inilim/di",
-  "description": "di",
+  "description": "end-to-end dependency injection",
   "type": "library",
   "license": "MIT",
   "autoload": {
