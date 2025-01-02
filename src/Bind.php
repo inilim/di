@@ -43,12 +43,7 @@ final class Bind
      */
     function class(string $abstract, $concrete = null, $context = null)
     {
-        if ($this->checkType($concrete)) {
-            $this->bind(self::KEY_CLASS, $abstract, $concrete, $context);
-            return $this;
-        }
-
-        throw new \InvalidArgumentException();
+        return $this->bindOrThrow(self::KEY_CLASS, $abstract, $concrete, $context, false, false);
     }
 
     /**
@@ -60,12 +55,7 @@ final class Bind
      */
     function classIf(string $abstract, $concrete = null, $context = null)
     {
-        if ($this->checkType($concrete)) {
-            $this->bindIf(self::KEY_CLASS, $abstract, $concrete, $context);
-            return $this;
-        }
-
-        throw new \InvalidArgumentException();
+        return $this->bindOrThrow(self::KEY_CLASS, $abstract, $concrete, $context, true, false);
     }
 
     // ------------------------------------------------------------------
@@ -81,12 +71,7 @@ final class Bind
      */
     function classTagIf(string $tag, $concrete, $context = null)
     {
-        if ($this->checkType($concrete)) {
-            $this->bindIf(self::KEY_CLASS_TAG, $tag, $concrete, $context);
-            return $this;
-        }
-
-        throw new \InvalidArgumentException();
+        return $this->bindOrThrow(self::KEY_CLASS_TAG, $tag, $concrete, $context, true, false);
     }
 
     /**
@@ -98,12 +83,7 @@ final class Bind
      */
     function classTag(string $tag, $concrete, $context = null)
     {
-        if ($this->checkType($concrete)) {
-            $this->bind(self::KEY_CLASS_TAG, $tag, $concrete, $context);
-            return $this;
-        }
-
-        throw new \InvalidArgumentException();
+        return $this->bindOrThrow(self::KEY_CLASS_TAG, $tag, $concrete, $context, false, false);
     }
 
     // ------------------------------------------------------------------
@@ -119,12 +99,7 @@ final class Bind
      */
     function singleton(string $abstract, $concrete = null, $context = null)
     {
-        if (\is_object($concrete) || $this->checkType($concrete)) {
-            $this->bind(self::KEY_SINGLETON, $abstract, $concrete, $context);
-            return $this;
-        }
-
-        throw new \InvalidArgumentException();
+        return $this->bindOrThrow(self::KEY_SINGLETON, $abstract, $concrete, $context);
     }
 
     /**
@@ -136,12 +111,7 @@ final class Bind
      */
     function singletonIf(string $abstract, $concrete = null, $context = null)
     {
-        if (\is_object($concrete) || $this->checkType($concrete)) {
-            $this->bindIf(self::KEY_SINGLETON, $abstract, $concrete, $context);
-            return $this;
-        }
-
-        throw new \InvalidArgumentException();
+        return $this->bindOrThrow(self::KEY_SINGLETON, $abstract, $concrete, $context, true);
     }
 
     // ------------------------------------------------------------------
@@ -157,12 +127,7 @@ final class Bind
      */
     function singletonTag(string $tag, $concrete = null, $context = null)
     {
-        if (\is_object($concrete) || $this->checkType($concrete)) {
-            $this->bind(self::KEY_SINGLETON_TAG, $tag, $concrete, $context);
-            return $this;
-        }
-
-        throw new \InvalidArgumentException();
+        return $this->bindOrThrow(self::KEY_SINGLETON_TAG, $tag, $concrete, $context);
     }
 
     /**
@@ -174,12 +139,7 @@ final class Bind
      */
     function singletonTagIf(string $tag, $concrete = null, $context = null)
     {
-        if (\is_object($concrete) || $this->checkType($concrete)) {
-            $this->bindIf(self::KEY_SINGLETON_TAG, $tag, $concrete, $context);
-            return $this;
-        }
-
-        throw new \InvalidArgumentException();
+        return $this->bindOrThrow(self::KEY_SINGLETON_TAG, $tag, $concrete, $context, true);
     }
 
     // ------------------------------------------------------------------
@@ -195,12 +155,7 @@ final class Bind
      */
     function swap(string $target, $swap, $context = null)
     {
-        if (\is_object($swap) || $this->checkType($swap)) {
-            $this->bind(self::KEY_SWAP, $target, $swap, $context);
-            return $this;
-        }
-
-        throw new \InvalidArgumentException();
+        return $this->bindOrThrow(self::KEY_SWAP, $target, $swap, $context);
     }
 
     /**
@@ -212,17 +167,40 @@ final class Bind
      */
     function swapTag(string $target, $swap, $context = null)
     {
-        if (\is_object($swap) || $this->checkType($swap)) {
-            $this->bind(self::KEY_SWAP_TAG, $target, $swap, $context);
-            return $this;
-        }
-
-        throw new \InvalidArgumentException();
+        return $this->bindOrThrow(self::KEY_SWAP_TAG, $target, $swap, $context);
     }
 
     // ------------------------------------------------------------------
     // 
     // ------------------------------------------------------------------
+
+    /**
+     * @param self::KEY_* $type
+     * @param class-string|non-empty-string $target
+     * @param null|ConcreteAll $concrete
+     * @param null|class-string|class-string[] $context
+     * @param bool $isIf
+     * @param bool $allowConcreteAnyObject
+     * @return self
+     */
+    protected function bindOrThrow(
+        $type,
+        $target,
+        $concrete,
+        $context = null,
+        $isIf = false,
+        $allowConcreteAnyObject = true
+    ) {
+        if (($allowConcreteAnyObject && \is_object($concrete)) || $this->checkType($concrete)) {
+            $isIf
+                ? $this->bindIf($type, $target, $concrete, $context)
+                : $this->bind($type, $target, $concrete, $context);
+
+            return $this;
+        }
+
+        throw new \InvalidArgumentException();
+    }
 
     /**
      * @param (self::KEY_*)|non-empty-list<(self::KEY_*)> $type
