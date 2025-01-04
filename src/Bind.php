@@ -191,7 +191,11 @@ final class Bind
         $isIf = false,
         $allowConcreteAnyObject = true
     ) {
-        if (($allowConcreteAnyObject && \is_object($concrete)) || $this->checkType($concrete)) {
+        if (
+            ($allowConcreteAnyObject && \is_object($concrete))
+            ||
+            $this->checkType($concrete)
+        ) {
             $isIf
                 ? $this->bindIf($type, $target, $concrete, $context)
                 : $this->bind($type, $target, $concrete, $context);
@@ -284,7 +288,7 @@ final class Bind
      * @param mixed[] $args
      * @return null|object
      */
-    protected function getByAbstract(string $abstract, $context = null, array $args = [])
+    protected function getByAbstract($abstract, $context = null, array $args = [])
     {
         $item = $this->find([
             self::KEY_SWAP,
@@ -303,7 +307,7 @@ final class Bind
      * @param mixed[] $args
      * @return null|object
      */
-    protected function getByTag(string $tag, $context = null, array $args = [])
+    protected function getByTag($tag, $context = null, array $args = [])
     {
         $item = $this->find([
             self::KEY_SWAP_TAG,
