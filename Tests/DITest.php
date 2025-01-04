@@ -9,9 +9,11 @@ use Inilim\Test\Other\Concrete2;
 
 use Inilim\Test\Other\IAbstract;
 
-/**
- * TODO Еще нужны тесты!!!
- */
+use function PHPUnit\Framework\assertEquals;
+use function PHPUnit\Framework\assertInstanceOf;
+use function PHPUnit\Framework\assertNotEquals;
+use function PHPUnit\Framework\assertNull;
+
 class DITest extends TestCase
 {
     // без контекста без абстрации
@@ -26,15 +28,15 @@ class DITest extends TestCase
         $args = [null, null, null, null, null];
         Bind::self()->class(Concrete::class);
 
-        $this->assertInstanceOf(Concrete::class, DI(Concrete::class));
-        $this->assertInstanceOf(Concrete::class, DI(Concrete::class, Context::class));
+        assertInstanceOf(Concrete::class, DI(Concrete::class));
+        assertInstanceOf(Concrete::class, DI(Concrete::class, Context::class));
         $a = DI(Concrete::class);
         $b = DI(Concrete::class);
-        $this->assertNotEquals(
+        assertNotEquals(
             spl_object_hash($a),
             spl_object_hash($b),
         );
-        $this->assertEquals($args, array_values((array)$a));
+        assertEquals($args, array_values((array)$a));
 
         // ---------------------------------------------
         // с аргументами
@@ -48,17 +50,17 @@ class DITest extends TestCase
         // если не биндим, то создаем как make
         Bind::self()->class(Concrete::class);
 
-        $this->assertInstanceOf(Concrete::class, DI(Concrete::class, $args));
-        $this->assertInstanceOf(Concrete::class, DI(Concrete::class, $args, Context::class));
+        assertInstanceOf(Concrete::class, DI(Concrete::class, $args));
+        assertInstanceOf(Concrete::class, DI(Concrete::class, $args, Context::class));
         $a = DI(Concrete::class, $args);
         $b = DI(Concrete::class, $args);
-        $this->assertNotEquals(
+        assertNotEquals(
             spl_object_hash($a),
             spl_object_hash($b),
         );
-        $this->assertEquals($args, array_values((array)$a));
+        assertEquals($args, array_values((array)$a));
         $c = DI(Concrete::class);
-        $this->assertNotEquals($args, array_values((array)$c));
+        assertNotEquals($args, array_values((array)$c));
 
         // ---------------------------------------------
         // без bind
@@ -69,17 +71,17 @@ class DITest extends TestCase
         // если не биндим, то создаем как make
         // Bind::self()->class(Concrete::class);
 
-        $this->assertInstanceOf(Concrete::class, DI(Concrete::class, $args));
-        $this->assertInstanceOf(Concrete::class, DI(Concrete::class, $args, Context::class));
+        assertInstanceOf(Concrete::class, DI(Concrete::class, $args));
+        assertInstanceOf(Concrete::class, DI(Concrete::class, $args, Context::class));
         $a = DI(Concrete::class, $args);
         $b = DI(Concrete::class, $args);
-        $this->assertNotEquals(
+        assertNotEquals(
             spl_object_hash($a),
             spl_object_hash($b),
         );
-        $this->assertEquals($args, array_values((array)$a));
+        assertEquals($args, array_values((array)$a));
         $c = DI(Concrete::class);
-        $this->assertNotEquals($args, array_values((array)$c));
+        assertNotEquals($args, array_values((array)$c));
     }
     function test_bind_closure__without_context_and_abstract(): void
     {
@@ -94,15 +96,15 @@ class DITest extends TestCase
             return new Concrete(...$args);
         });
 
-        $this->assertInstanceOf(Concrete::class, DI(Concrete::class));
-        $this->assertInstanceOf(Concrete::class, DI(Concrete::class, Context::class));
+        assertInstanceOf(Concrete::class, DI(Concrete::class));
+        assertInstanceOf(Concrete::class, DI(Concrete::class, Context::class));
         $a = DI(Concrete::class);
         $b = DI(Concrete::class);
-        $this->assertNotEquals(
+        assertNotEquals(
             spl_object_hash($a),
             spl_object_hash($b),
         );
-        $this->assertEquals($args, array_values((array)$a));
+        assertEquals($args, array_values((array)$a));
 
         // ---------------------------------------------
         // с аргументами
@@ -117,17 +119,17 @@ class DITest extends TestCase
             return new Concrete(...$args);
         });
 
-        $this->assertInstanceOf(Concrete::class, DI(Concrete::class, $args));
-        $this->assertInstanceOf(Concrete::class, DI(Concrete::class, $args, Context::class));
+        assertInstanceOf(Concrete::class, DI(Concrete::class, $args));
+        assertInstanceOf(Concrete::class, DI(Concrete::class, $args, Context::class));
         $a = DI(Concrete::class, $args);
         $b = DI(Concrete::class, $args);
-        $this->assertNotEquals(
+        assertNotEquals(
             spl_object_hash($a),
             spl_object_hash($b),
         );
-        $this->assertEquals($args, array_values((array)$a));
+        assertEquals($args, array_values((array)$a));
         $c = DI(Concrete::class);
-        $this->assertNotEquals($args, array_values((array)$c));
+        assertNotEquals($args, array_values((array)$c));
     }
 
     // без контекста с абстрации
@@ -142,14 +144,14 @@ class DITest extends TestCase
         $args = [null, null, null, null, null];
         Bind::self()->class(IAbstract::class, Concrete::class);
 
-        $this->assertInstanceOf(Concrete::class, DI(IAbstract::class));
+        assertInstanceOf(Concrete::class, DI(IAbstract::class));
         $a = DI(IAbstract::class);
         $b = DI(IAbstract::class);
-        $this->assertNotEquals(
+        assertNotEquals(
             spl_object_hash($a),
             spl_object_hash($b),
         );
-        $this->assertEquals($args, array_values((array)$a));
+        assertEquals($args, array_values((array)$a));
 
         // ---------------------------------------------
         // с аргументами
@@ -162,16 +164,16 @@ class DITest extends TestCase
 
         Bind::self()->class(IAbstract::class, Concrete::class);
 
-        $this->assertInstanceOf(Concrete::class, DI(IAbstract::class, $args));
+        assertInstanceOf(Concrete::class, DI(IAbstract::class, $args));
         $a = DI(IAbstract::class, $args);
         $b = DI(IAbstract::class, $args);
-        $this->assertNotEquals(
+        assertNotEquals(
             spl_object_hash($a),
             spl_object_hash($b),
         );
-        $this->assertEquals($args, array_values((array)$a));
+        assertEquals($args, array_values((array)$a));
         $c = DI(IAbstract::class);
-        $this->assertNotEquals($args, array_values((array)$c));
+        assertNotEquals($args, array_values((array)$c));
     }
     function test_bind_closure__without_context_with_abstract(): void
     {
@@ -186,14 +188,14 @@ class DITest extends TestCase
             return new Concrete(...$args);
         });
 
-        $this->assertInstanceOf(Concrete::class, DI(IAbstract::class));
+        assertInstanceOf(Concrete::class, DI(IAbstract::class));
         $a = DI(IAbstract::class);
         $b = DI(IAbstract::class);
-        $this->assertNotEquals(
+        assertNotEquals(
             spl_object_hash($a),
             spl_object_hash($b),
         );
-        $this->assertEquals($args, array_values((array)$a));
+        assertEquals($args, array_values((array)$a));
 
         // ---------------------------------------------
         // с аргументами
@@ -208,21 +210,111 @@ class DITest extends TestCase
             return new Concrete(...$args);
         });
 
-        $this->assertInstanceOf(Concrete::class, DI(IAbstract::class, $args));
+        assertInstanceOf(Concrete::class, DI(IAbstract::class, $args));
         $a = DI(IAbstract::class, $args);
         $b = DI(IAbstract::class, $args);
-        $this->assertNotEquals(
+        assertNotEquals(
             spl_object_hash($a),
             spl_object_hash($b),
         );
-        $this->assertEquals($args, array_values((array)$a));
+        assertEquals($args, array_values((array)$a));
         $c = DI(IAbstract::class);
-        $this->assertNotEquals($args, array_values((array)$c));
+        assertNotEquals($args, array_values((array)$c));
     }
 
     // с контекстом без абстрации
-    // function test_bind_class_string__with_context_without_abstract(): void {}
-    // function test_bind_closure__with_context_without_abstract(): void {}
+    function test_bind_class_string__with_context_without_abstract(): void
+    {
+        // ---------------------------------------------
+        // без аргументов
+        // ---------------------------------------------
+
+        self::clearBindMap();
+
+        $args = [null, null, null, null, null];
+        Bind::self()->class(Concrete::class, null, Context::class);
+
+        assertNull(self::DI(Concrete::class));
+        assertInstanceOf(Concrete::class, self::DI(Concrete::class, Context::class));
+        $a = self::DI(Concrete::class, Context::class);
+        $b = self::DI(Concrete::class, Context::class);
+        assertNotEquals(
+            \spl_object_hash($a),
+            \spl_object_hash($b),
+        );
+        assertEquals($args, array_values((array)$a));
+
+        // ---------------------------------------------
+        // с аргументами
+        // ---------------------------------------------
+
+        self::clearBindMap();
+
+        $arg5 = new \stdClass;
+        $args = [1000, 'string', 0.2000, [1, 2, 3], $arg5];
+
+        Bind::self()->class(Concrete::class, null, Context::class);
+
+        assertNull(self::DI(Concrete::class));
+        assertInstanceOf(Concrete::class, self::DI(Concrete::class, Context::class));
+        $a = self::DI(Concrete::class, $args, Context::class);
+        $b = self::DI(Concrete::class, Context::class);
+        assertNotEquals(
+            \spl_object_hash($a),
+            \spl_object_hash($b),
+        );
+        assertEquals($args, array_values((array)$a));
+        $c = self::DI(Concrete::class, Context::class);
+        assertNotEquals($args, array_values((array)$c));
+    }
+    function test_bind_closure__with_context_without_abstract(): void
+    {
+        // ---------------------------------------------
+        // без аргументов
+        // ---------------------------------------------
+
+        self::clearBindMap();
+
+        $args = [null, null, null, null, null];
+        Bind::self()->class(Concrete::class, static function ($di, $args) {
+            return new Concrete(...$args);
+        }, Context::class);
+
+        assertNull(self::DI(Concrete::class));
+        assertInstanceOf(Concrete::class, self::DI(Concrete::class, Context::class));
+        $a = self::DI(Concrete::class, Context::class);
+        $b = self::DI(Concrete::class, Context::class);
+        assertNotEquals(
+            \spl_object_hash($a),
+            \spl_object_hash($b),
+        );
+        assertEquals($args, array_values((array)$a));
+
+        // ---------------------------------------------
+        // с аргументами
+        // ---------------------------------------------
+
+        self::clearBindMap();
+
+        $arg5 = new \stdClass;
+        $args = [1000, 'string', 0.2000, [1, 2, 3], $arg5];
+
+        Bind::self()->class(Concrete::class, static function ($di, $args) {
+            return new Concrete(...$args);
+        }, Context::class);
+
+        assertNull(self::DI(Concrete::class));
+        assertInstanceOf(Concrete::class, self::DI(Concrete::class, Context::class));
+        $a = self::DI(Concrete::class, $args, Context::class);
+        $b = self::DI(Concrete::class, Context::class);
+        assertNotEquals(
+            \spl_object_hash($a),
+            \spl_object_hash($b),
+        );
+        assertEquals($args, array_values((array)$a));
+        $c = self::DI(Concrete::class, Context::class);
+        assertNotEquals($args, array_values((array)$c));
+    }
 
     // с контекстом с абстрации
     function test_bind_class_string__with_context_and_abstract(): void
@@ -237,15 +329,18 @@ class DITest extends TestCase
         Bind::self()->class(IAbstract::class, Concrete::class, Context::class);
 
         $context = new Context;
-        $this->assertInstanceOf(Concrete::class, DI(IAbstract::class, $context));
-        $this->assertInstanceOf(Concrete::class, DI(IAbstract::class, Context::class));
+
+        assertNull(self::DI(IAbstract::class));
+        assertNull(self::DI(Concrete::class));
+        assertInstanceOf(Concrete::class, DI(IAbstract::class, $context));
+        assertInstanceOf(Concrete::class, DI(IAbstract::class, Context::class));
         $a = DI(IAbstract::class, $context);
         $b = DI(IAbstract::class, Context::class);
-        $this->assertNotEquals(
+        assertNotEquals(
             spl_object_hash($a),
             spl_object_hash($b),
         );
-        $this->assertEquals($args, array_values((array)$a));
+        assertEquals($args, array_values((array)$a));
 
         // ---------------------------------------------
         // с аргументами
@@ -259,17 +354,73 @@ class DITest extends TestCase
         Bind::self()->class(IAbstract::class, Concrete::class, Context::class);
 
         $context = new Context;
-        $this->assertInstanceOf(Concrete::class, DI(IAbstract::class, $args, $context));
-        $this->assertInstanceOf(Concrete::class, DI(IAbstract::class, $args, Context::class));
+        assertNull(self::DI(IAbstract::class));
+        assertNull(self::DI(Concrete::class));
+        assertInstanceOf(Concrete::class, DI(IAbstract::class, $args, $context));
+        assertInstanceOf(Concrete::class, DI(IAbstract::class, $args, Context::class));
         $a = DI(IAbstract::class, $args, $context);
         $b = DI(IAbstract::class, $args, Context::class);
-        $this->assertNotEquals(
+        assertNotEquals(
             spl_object_hash($a),
             spl_object_hash($b),
         );
-        $this->assertEquals($args, array_values((array)$a));
+        assertEquals($args, array_values((array)$a));
         $c = DI(IAbstract::class, Context::class);
-        $this->assertNotEquals($args, array_values((array)$c));
+        assertNotEquals($args, array_values((array)$c));
     }
-    // function test_bind_closure__with_context_and_abstract(): void {}
+    function test_bind_closure__with_context_and_abstract(): void
+    {
+        // ---------------------------------------------
+        // без аргументов
+        // ---------------------------------------------
+
+        self::clearBindMap();
+
+        $args = [null, null, null, null, null];
+        Bind::self()->class(IAbstract::class, static function ($di, $args) {
+            return new Concrete(...$args);
+        }, Context::class);
+
+        $context = new Context;
+
+        assertNull(self::DI(IAbstract::class));
+        assertNull(self::DI(Concrete::class));
+        assertInstanceOf(Concrete::class, DI(IAbstract::class, $context));
+        assertInstanceOf(Concrete::class, DI(IAbstract::class, Context::class));
+        $a = DI(IAbstract::class, $context);
+        $b = DI(IAbstract::class, Context::class);
+        assertNotEquals(
+            spl_object_hash($a),
+            spl_object_hash($b),
+        );
+        assertEquals($args, array_values((array)$a));
+
+        // ---------------------------------------------
+        // с аргументами
+        // ---------------------------------------------
+
+        self::clearBindMap();
+
+        $arg5 = new \stdClass;
+        $args = [1000, 'string', 0.2000, [1, 2, 3], $arg5];
+
+        Bind::self()->class(IAbstract::class, static function ($di, $args) {
+            return new Concrete(...$args);
+        }, Context::class);
+
+        $context = new Context;
+        assertNull(self::DI(IAbstract::class));
+        assertNull(self::DI(Concrete::class));
+        assertInstanceOf(Concrete::class, DI(IAbstract::class, $args, $context));
+        assertInstanceOf(Concrete::class, DI(IAbstract::class, $args, Context::class));
+        $a = DI(IAbstract::class, $args, $context);
+        $b = DI(IAbstract::class, $args, Context::class);
+        assertNotEquals(
+            spl_object_hash($a),
+            spl_object_hash($b),
+        );
+        assertEquals($args, array_values((array)$a));
+        $c = DI(IAbstract::class, Context::class);
+        assertNotEquals($args, array_values((array)$c));
+    }
 }
