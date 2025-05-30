@@ -9,7 +9,6 @@ use Inilim\DI\Bind;
 
 /**
  * @internal \Inilim\DI
- * @psalm-internal \Inilim\DI
  */
 final class ItemBind
 {
@@ -87,7 +86,7 @@ final class ItemBind
     }
 
     /**
-     * @param class-string|object|\Closure(DI, mixed[]):object $concrete
+     * @param class-string|object|\Closure(DI $di, mixed[] $args):object $concrete
      * @param mixed[] $args
      * @return object
      */

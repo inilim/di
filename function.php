@@ -18,7 +18,7 @@ if (!\function_exists('DI')) {
         $args = [];
         if (\is_array($argsOrContext)) {
             $args = $argsOrContext;
-        } else {
+        } elseif ($argsOrContext !== null) {
             $context = $argsOrContext;
         }
 
@@ -41,7 +41,7 @@ if (!\function_exists('DITag')) {
         $args = [];
         if (\is_array($argsOrContext)) {
             $args = $argsOrContext;
-        } else {
+        } elseif ($argsOrContext !== null) {
             $context = $argsOrContext;
         }
 

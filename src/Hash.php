@@ -6,7 +6,6 @@ namespace Inilim\DI;
 
 /**
  * @internal \Inilim\DI
- * @psalm-internal \Inilim\DI
  */
 final class Hash
 {

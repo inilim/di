@@ -11,9 +11,8 @@ use Inilim\Singleton\SimpleSingleton;
 
 /**
  * @api
- * @psalm-type ClosureConcrete = \Closure(DI,mixed[]):object
- * @psalm-type ConcreteAll     = class-string|object|ClosureConcrete
- * @psalm-type Concrete        = class-string|ClosureConcrete
+ * @phpstan-type ConcreteAll class-string|object|\Closure(DI $di, mixed[] $args): object
+ * @phpstan-type Concrete class-string|\Closure(DI $di, mixed[] $args): object
  */
 final class Bind
 {

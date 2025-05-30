@@ -8,6 +8,10 @@ use Inilim\Dump\Dump;
 
 Dump::init();
 
+Bind::self()->singleton(Dep1::class, static function ($di, $a) {
+    $di;
+});
+
 class Dep1
 {
     function method1() {}
