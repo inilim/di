@@ -15,27 +15,18 @@ final class ItemBind
     /**
      * @var class-string|non-empty-string
      */
-    protected $abstractOrTag;
+    protected string $abstractOrTag;
     /**
      * @var Bind::KEY_*
      */
-    protected $type;
+    protected string $type;
     /**
      * @var null|class-string|object|\Closure(Bind, mixed[]):object
      */
     protected $concrete;
-    /**
-     * @var ?object
-     */
-    protected $resolvedObject = null;
-    /** 
-     * @var bool
-     */
-    protected $isTag;
-    /** 
-     * @var bool
-     */
-    protected $isSingleton;
+    protected ?object $resolvedObject = null;
+    protected bool $isTag;
+    protected bool $isSingleton;
 
     /**
      * @param class-string|non-empty-string $abstractOrTag contract/interface OR realization/implementation OR tag name
@@ -67,11 +58,12 @@ final class ItemBind
 
     /**
      * @param mixed[] $args
-     * @return object
      */
-    function resolveAndGetConcrete(array $args)
+    function resolveAndGetConcrete(array $args): object
     {
-        if ($this->resolvedObject !== null) return $this->resolvedObject;
+        if ($this->resolvedObject !== null) {
+            return $this->resolvedObject;
+        }
 
         if ($this->isSingleton) {
             // @phpstan-ignore-next-line
@@ -88,9 +80,8 @@ final class ItemBind
     /**
      * @param class-string|object|\Closure(DI $di, mixed[] $args):object $concrete
      * @param mixed[] $args
-     * @return object
      */
-    protected function resolve($concrete, array $args)
+    protected function resolve($concrete, array $args): object
     {
         if (\is_string($concrete)) {
             return new $concrete(...$args);

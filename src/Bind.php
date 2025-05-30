@@ -27,7 +27,7 @@ final class Bind
         KEY_SWAP_TAG      = 'swt';
 
     /** @var array<(self::KEY_*),array<string,ItemBind>> */
-    protected $map = [];
+    protected array $map = [];
 
     // ---------------------------------------------
     // Class
@@ -183,12 +183,12 @@ final class Bind
      * @return self
      */
     protected function bindOrThrow(
-        $type,
-        $target,
+        string $type,
+        string $target,
         $concrete,
         $context = null,
-        $isIf = false,
-        $allowConcreteAnyObject = true
+        bool $isIf = false,
+        bool $allowConcreteAnyObject = true
     ) {
         if (
             ($allowConcreteAnyObject && \is_object($concrete))
@@ -208,9 +208,8 @@ final class Bind
     /**
      * @param (self::KEY_*)|non-empty-list<(self::KEY_*)> $type
      * @param non-empty-string $hash
-     * @return null|ItemBind
      */
-    protected function find($type, $hash)
+    protected function find($type, string $hash): ?ItemBind
     {
         foreach ((array)$type as $t) {
             $r = $this->map[$t][$hash] ?? null;
@@ -226,14 +225,13 @@ final class Bind
      * @param class-string|non-empty-string $abstractOrTag
      * @param null|ConcreteAll $concrete
      * @param null|class-string|class-string[] $context
-     * @return void
      */
     protected function bind(
-        $type,
-        $abstractOrTag,
+        string $type,
+        string $abstractOrTag,
         $concrete = null,
         $context = null
-    ) {
+    ): void {
         $this->map[$type] ??= [];
 
         $item  = new ItemBind($abstractOrTag, $type, $concrete);
@@ -249,14 +247,13 @@ final class Bind
      * @param class-string|non-empty-string $abstractOrTag
      * @param null|ConcreteAll $concrete
      * @param null|class-string|class-string[] $context
-     * @return void
      */
     protected function bindIf(
-        $type,
-        $abstractOrTag,
+        string $type,
+        string $abstractOrTag,
         $concrete = null,
         $context = null
-    ) {
+    ): void {
         $contextFiltered = [];
         foreach (
             (\is_array($context) ? $context : [$context]) as $c
@@ -274,9 +271,9 @@ final class Bind
 
     /**
      * @param mixed $value
-     * @return bool
+     * @phpstan-assert-if-true null|string|\Closure $value
      */
-    protected function checkType($value)
+    protected function checkType($value): bool
     {
         return $value === null || \is_string($value) || $value instanceof \Closure;
     }
@@ -285,9 +282,8 @@ final class Bind
      * @param class-string $abstract contract/interface OR realization/implementation
      * @param null|class-string|object $context
      * @param mixed[] $args
-     * @return null|object
      */
-    protected function getByAbstract($abstract, $context = null, array $args = [])
+    protected function getByAbstract(string $abstract, $context = null, array $args = []): ?object
     {
         $item = $this->find([
             self::KEY_SWAP,
@@ -304,9 +300,8 @@ final class Bind
      * @param non-empty-string $tag
      * @param null|class-string|object $context
      * @param mixed[] $args
-     * @return null|object
      */
-    protected function getByTag($tag, $context = null, array $args = [])
+    protected function getByTag(string $tag, $context = null, array $args = []): ?object
     {
         $item = $this->find([
             self::KEY_SWAP_TAG,

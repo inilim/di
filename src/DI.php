@@ -17,7 +17,7 @@ final class DI
     /**
      * @var \Closure(string, mixed[]):?object
      */
-    protected $closureBind;
+    protected \Closure $closureBind;
 
     private function __construct()
     {
@@ -32,9 +32,8 @@ final class DI
      * @param class-string $abstract
      * @param null|class-string|object $context
      * @param mixed[] $args
-     * @return object
      */
-    function getByAbstract(string $abstract, $context = null, array $args = [])
+    function getByAbstract(string $abstract, $context = null, array $args = []): object
     {
         // @phpstan-ignore-next-line
         return $this->closureBind->__invoke(__FUNCTION__, \func_get_args()) ?? $this->make($abstract, $args);
@@ -44,9 +43,8 @@ final class DI
      * @param non-empty-string $tag
      * @param null|class-string|object $context
      * @param mixed[] $args
-     * @return ?object
      */
-    function getByTag(string $tag, $context = null, array $args = [])
+    function getByTag(string $tag, $context = null, array $args = []): ?object
     {
         // @phpstan-ignore-next-line
         return $this->closureBind->__invoke(__FUNCTION__, \func_get_args());
@@ -58,7 +56,7 @@ final class DI
      * @param mixed[] $args
      * @return T
      */
-    function make(string $dependence, array $args = [])
+    function make(string $dependence, array $args = []): object
     {
         return new $dependence(...$args);
     }
