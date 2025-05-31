@@ -186,14 +186,14 @@ final class Bind
         string $type,
         string $target,
         $concrete,
-        $context = null,
-        bool $isIf = false,
+        $context                     = null,
+        bool $isIf                   = false,
         bool $allowConcreteAnyObject = true
     ) {
         if (
             ($allowConcreteAnyObject && \is_object($concrete))
             ||
-            $this->checkType($concrete)
+            $this->checkTypeConcrete($concrete)
         ) {
             $isIf
                 ? $this->bindIf($type, $target, $concrete, $context)
@@ -202,7 +202,7 @@ final class Bind
             return $this;
         }
 
-        throw new \InvalidArgumentException();
+        throw new \InvalidArgumentException;
     }
 
     /**
@@ -273,7 +273,7 @@ final class Bind
      * @param mixed $value
      * @phpstan-assert-if-true null|string|\Closure $value
      */
-    protected function checkType($value): bool
+    protected function checkTypeConcrete($value): bool
     {
         return $value === null || \is_string($value) || $value instanceof \Closure;
     }

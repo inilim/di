@@ -13,19 +13,10 @@ use Inilim\DI\Bind;
 final class ItemBind
 {
     /**
-     * @var class-string|non-empty-string
-     */
-    protected string $abstractOrTag;
-    /**
-     * @var Bind::KEY_*
-     */
-    protected string $type;
-    /**
      * @var null|class-string|object|\Closure(Bind, mixed[]):object
      */
     protected $concrete;
     protected ?object $resolvedObject = null;
-    protected bool $isTag;
     protected bool $isSingleton;
 
     /**
@@ -38,21 +29,19 @@ final class ItemBind
         string $type,
         $concrete = null
     ) {
-        $this->type        = $type;
-        $this->isTag       = !\in_array($type, [BIND::KEY_CLASS, BIND::KEY_SINGLETON, BIND::KEY_SWAP], true);
+        $isTag             = !\in_array($type, [BIND::KEY_CLASS, BIND::KEY_SINGLETON, BIND::KEY_SWAP], true);
         $this->isSingleton = \in_array($type, [BIND::KEY_SINGLETON, BIND::KEY_SINGLETON_TAG], true);
 
-        if ($this->isTag) {
+        if ($isTag) {
             if ($concrete === null) {
                 throw new \InvalidArgumentException('Tag bind not found concrete');
             }
-            $this->abstractOrTag = $abstractOrTag;
             $this->concrete      = $concrete;
         } else {
             // @phpstan-ignore-next-line
-            $this->abstractOrTag = \ltrim($abstractOrTag, '\\');
+            $abstractOrTag = \ltrim($abstractOrTag, '\\');
             // @phpstan-ignore-next-line
-            $this->concrete      = $concrete ?? $this->abstractOrTag;
+            $this->concrete      = $concrete ?? $abstractOrTag;
         }
     }
 
