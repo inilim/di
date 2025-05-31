@@ -11,8 +11,9 @@ use Inilim\Singleton\SimpleSingleton;
 
 /**
  * @api
- * @phpstan-type ConcreteAll class-string|object|\Closure(DI $di, mixed[] $args): object
- * @phpstan-type Concrete class-string|\Closure(DI $di, mixed[] $args): object
+ * 
+ * @phpstan-type TypeConcreteAll class-string|object|\Closure(DI $di, mixed[] $args): object
+ * @phpstan-type TypeConcrete class-string|\Closure(DI $di, mixed[] $args): object
  */
 final class Bind
 {
@@ -47,7 +48,7 @@ final class Bind
 
     /**
      * @param class-string $abstract contract/interface OR realization/implementation
-     * @param null|Concrete $concrete
+     * @param null|class-string|\Closure(DI $di, mixed[] $args): object $concrete
      * @param null|class-string|class-string[] $context
      * @throws \InvalidArgumentException
      * @return self
@@ -63,7 +64,7 @@ final class Bind
 
     /**
      * @param non-empty-string $tag
-     * @param Concrete $concrete
+     * @param class-string|\Closure(DI $di, mixed[] $args): object $concrete
      * @param null|class-string|class-string[] $context
      * @throws \InvalidArgumentException
      * @return self
@@ -75,7 +76,7 @@ final class Bind
 
     /**
      * @param non-empty-string $tag
-     * @param Concrete $concrete
+     * @param class-string|\Closure(DI $di, mixed[] $args): object $concrete
      * @param null|class-string|class-string[] $context
      * @throws \InvalidArgumentException
      * @return self
@@ -91,7 +92,7 @@ final class Bind
 
     /**
      * @param class-string $abstract contract/interface OR realization/implementation
-     * @param null|ConcreteAll $concrete
+     * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
      * @param null|class-string|class-string[] $context
      * @throws \InvalidArgumentException
      * @return self
@@ -103,7 +104,7 @@ final class Bind
 
     /**
      * @param class-string $abstract contract/interface OR realization/implementation
-     * @param null|ConcreteAll $concrete
+     * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
      * @param null|class-string|class-string[] $context
      * @throws \InvalidArgumentException
      * @return self
@@ -119,7 +120,7 @@ final class Bind
 
     /**
      * @param non-empty-string $tag
-     * @param null|ConcreteAll $concrete
+     * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
      * @param null|class-string|class-string[] $context
      * @throws \InvalidArgumentException
      * @return self
@@ -131,7 +132,7 @@ final class Bind
 
     /**
      * @param non-empty-string $tag
-     * @param null|ConcreteAll $concrete
+     * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
      * @param null|class-string|class-string[] $context
      * @throws \InvalidArgumentException
      * @return self
@@ -147,7 +148,7 @@ final class Bind
 
     /**
      * @param class-string $target contract/interface OR realization/implementation
-     * @param ConcreteAll $swap
+     * @param class-string|object|\Closure(DI $di, mixed[] $args): object $swap
      * @param null|class-string|class-string[] $context
      * @throws \InvalidArgumentException
      * @return self
@@ -159,7 +160,7 @@ final class Bind
 
     /**
      * @param non-empty-string $target
-     * @param ConcreteAll $swap
+     * @param class-string|object|\Closure(DI $di, mixed[] $args): object $swap
      * @param null|class-string|class-string[] $context
      * @throws \InvalidArgumentException
      * @return self
@@ -176,7 +177,7 @@ final class Bind
     /**
      * @param self::KEY_* $type
      * @param class-string|non-empty-string $target
-     * @param null|ConcreteAll $concrete
+     * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
      * @param null|class-string|class-string[] $context
      * @param bool $isIf
      * @param bool $allowConcreteAnyObject
@@ -223,7 +224,7 @@ final class Bind
     /**
      * @param self::KEY_* $type
      * @param class-string|non-empty-string $abstractOrTag
-     * @param null|ConcreteAll $concrete
+     * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
      * @param null|class-string|class-string[] $context
      */
     protected function bind(
@@ -245,7 +246,7 @@ final class Bind
     /**
      * @param self::KEY_* $type
      * @param class-string|non-empty-string $abstractOrTag
-     * @param null|ConcreteAll $concrete
+     * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
      * @param null|class-string|class-string[] $context
      */
     protected function bindIf(
