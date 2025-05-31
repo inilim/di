@@ -29,11 +29,52 @@ final class DI
     }
 
     /**
+     * @template T of object
+     * @param class-string<T> $dependence
+     * @param null|class-string|object|mixed[] $argsOrContext array is args else context
+     * @param null|class-string|object $context
+     * @return T
+     */
+    function DI(string $dependence, $argsOrContext = null, $context = null): object
+    {
+        [$context, $args] = $this->defineArgsContext($argsOrContext, $context);
+        return $this->getByAbstract($dependence, $context, $args);
+    }
+
+    /**
+     * @param non-empty-string $tag
+     * @param null|class-string|object|mixed[] $argsOrContext array is args else context
+     * @param null|class-string|object $context
+     */
+    function DITag(string $tag, $argsOrContext = null, $context = null): ?object
+    {
+        [$context, $args] = $this->defineArgsContext($argsOrContext, $context);
+        return $this->getByTag($tag, $context, $args);
+    }
+
+    /**
+     * @param null|class-string|object|mixed[] $argsOrContext array is args else context
+     * @param null|class-string|object $context
+     * @return array{0:null|class-string|object,1:null|mixed[]}
+     */
+    protected function defineArgsContext($argsOrContext = null, $context = null): array
+    {
+        $args = [];
+        if (\is_array($argsOrContext)) {
+            $args = $argsOrContext;
+        } elseif ($argsOrContext !== null) {
+            $context = $argsOrContext;
+        }
+
+        return [$context, $args];
+    }
+
+    /**
      * @param class-string $abstract
      * @param null|class-string|object $context
      * @param mixed[] $args
      */
-    function getByAbstract(string $abstract, $context = null, array $args = []): object
+    protected function getByAbstract(string $abstract, $context = null, array $args = []): object
     {
         // @phpstan-ignore-next-line
         return $this->closureBind->__invoke(__FUNCTION__, \func_get_args()) ?? $this->make($abstract, $args);
@@ -44,7 +85,7 @@ final class DI
      * @param null|class-string|object $context
      * @param mixed[] $args
      */
-    function getByTag(string $tag, $context = null, array $args = []): ?object
+    protected function getByTag(string $tag, $context = null, array $args = []): ?object
     {
         // @phpstan-ignore-next-line
         return $this->closureBind->__invoke(__FUNCTION__, \func_get_args());

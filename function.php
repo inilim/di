@@ -10,19 +10,13 @@ if (!\function_exists('DI')) {
      * @param null|class-string|object $context
      * @return T
      */
-    function DI(string $dependence, $argsOrContext = null, $context = null)
+    function DI(string $dependence, $argsOrContext = null, $context = null): object
     {
         static $o = null;
-        $o ??= DI::self();
-
-        $args = [];
-        if (\is_array($argsOrContext)) {
-            $args = $argsOrContext;
-        } elseif ($argsOrContext !== null) {
-            $context = $argsOrContext;
+        if ($o === null) {
+            $o = DI::self();
         }
-
-        return $o->getByAbstract($dependence, $context, $args);
+        return $o->DI($dependence, $argsOrContext, $context);
     }
 }
 
@@ -31,20 +25,13 @@ if (!\function_exists('DITag')) {
      * @param non-empty-string $tag
      * @param null|class-string|object|mixed[] $argsOrContext array is args else context
      * @param null|class-string|object $context
-     * @return ?object
      */
-    function DITag(string $tag, $argsOrContext = null, $context = null)
+    function DITag(string $tag, $argsOrContext = null, $context = null): ?object
     {
         static $o = null;
-        $o ??= DI::self();
-
-        $args = [];
-        if (\is_array($argsOrContext)) {
-            $args = $argsOrContext;
-        } elseif ($argsOrContext !== null) {
-            $context = $argsOrContext;
+        if ($o === null) {
+            $o = DI::self();
         }
-
-        return $o->getByTag($tag, $context, $args);
+        return $o->DITag($tag, $argsOrContext, $context);
     }
 }
