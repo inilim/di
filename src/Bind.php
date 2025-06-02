@@ -103,6 +103,19 @@ final class Bind
     }
 
     /**
+     * @param class-string[] $abstract contract/interface OR realization/implementation
+     * @throws \InvalidArgumentException
+     * @return self
+     */
+    function singletonList(array $abstract)
+    {
+        foreach ($abstract as $item) {
+            $this->bindOrThrow(self::KEY_SINGLETON, $item, null, null, false, true);
+        }
+        return $this;
+    }
+
+    /**
      * @param class-string $abstract contract/interface OR realization/implementation
      * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
      * @param null|class-string|class-string[] $context
