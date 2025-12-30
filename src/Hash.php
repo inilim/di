@@ -16,9 +16,12 @@ final class Hash
      */
     static function get(string $string, $context): string
     {
-        if (\is_object($context)) {
+        $t = \gettype($context);
+        if ($t === 'object') {
+            /** @var object $context */
             $context = \get_class($context);
-        } elseif (\is_string($context)) {
+        } elseif ($t === 'string') {
+            /** @var string $context */
             $context = \ltrim($context, '\\');
         } else {
             $context = '';
