@@ -112,6 +112,39 @@ $bind->swap(OriginalClass::class, MockClass::class);
 $bind->swapTag('original_tag', 'mock_tag');
 ```
 
+## Testing with Mocks and Swaps
+
+When writing PHPUnit tests, you can use the swap functionality to replace real implementations with mocks:
+
+```php
+use PHPUnit\Framework\TestCase;
+use Inilim\DI\Bind;
+
+class MyServiceTest extends TestCase
+{
+    public function testServiceWithMockDependency()
+    {
+        // Create a mock for the dependency
+        $mockDependency = $this->createMock(DependencyInterface::class);
+        $mockDependency->method('someMethod')
+                       ->willReturn('mocked result');
+
+        // Swap the real dependency with the mock
+        $bind = Bind::self();
+        $bind->swap(DependencyInterface::class, $mockDependency);
+
+        // Now when we create our service, it will use the mock
+        $service = \DI(MyService::class);
+        
+        // Perform your test
+        $result = $service->doSomething();
+        
+        // Assertions
+        $this->assertEquals('expected result', $result);
+    }
+}
+```
+
 ## Contextual Dependency
 
 The library supports contextual dependency, allowing different implementations of the same interface based on the application context.
