@@ -67,8 +67,9 @@ final class ItemBind
     }
 
     /**
-     * @param class-string|object|\Closure(DI $di, mixed[] $args):object $concrete
-     * @param mixed[] $args
+     * @template ARG of mixed
+     * @param class-string|object|\Closure(DI $di, ARG[] $args):object $concrete
+     * @param ARG[] $args
      */
     protected function resolve($concrete, array $args): object
     {
