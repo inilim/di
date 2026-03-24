@@ -171,4 +171,23 @@ final class Map
             ? $item->resolveAndGetConcrete($args)
             : null;
     }
+
+    /**
+     * @param non-empty-string $tag
+     * @param null|class-string|object $context
+     * @param mixed[] $args
+     * @return mixed
+     */
+    // public function getValueByTag(string $tag, $context = null, array $args = [])
+    // {
+    // $item = $this->find([
+    // self::KEY_SWAP_VALUE,
+    // self::KEY_VALUE,
+    // self::KEY_SINGLE_VALUE,
+    // ], Hash::get($tag, $context));
+
+    // return $item
+    // ? $item->resolveAndGetConcrete($args)
+    // : null;
+    // }
 }
