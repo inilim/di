@@ -434,19 +434,19 @@ class DITest extends TestCase
             return new \stdClass;
         })
             ->singletonTag('name2', static function ($di) {
-                return $di->DITag('name1');
+                return $di->tag('name1');
             })
             ->singletonTag('name3', static function ($di) {
-                return $di->DITag('name2');
+                return $di->tag('name2');
             })
             // 
         ;
 
         $di = DI::self();
 
-        $obj  = $di->DITag('name1');
-        $obj2 = $di->DITag('name2');
-        $obj3 = $di->DITag('name3');
+        $obj  = $di->tag('name1');
+        $obj2 = $di->tag('name2');
+        $obj3 = $di->tag('name3');
 
         $this->assertSame(\spl_object_hash($obj), \spl_object_hash($obj2));
         $this->assertSame(\spl_object_hash($obj), \spl_object_hash($obj3));

@@ -37,12 +37,12 @@ final class ItemBind
             if ($concrete === null) {
                 throw new \InvalidArgumentException('Tag bind not found concrete');
             }
-            $this->concrete      = $concrete;
+            $this->concrete = $concrete;
         } else {
             // @phpstan-ignore-next-line
             $abstractOrTag = \ltrim($abstractOrTag, '\\');
             // @phpstan-ignore-next-line
-            $this->concrete      = $concrete ?? $abstractOrTag;
+            $this->concrete = $concrete ?? $abstractOrTag;
         }
     }
 

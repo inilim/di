@@ -32,6 +32,6 @@ if (!\function_exists('DITag')) {
         if ($o === null) {
             $o = DI::self();
         }
-        return $o->DITag($tag, $argsOrContext, $context);
+        return $o->tag($tag, $argsOrContext, $context);
     }
 }

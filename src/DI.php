@@ -35,11 +35,23 @@ final class DI
     }
 
     /**
+     * @deprecated use DI::tag()
+     * 
      * @param non-empty-string $tag
      * @param null|class-string|object|mixed[] $argsOrContext array is args else context
      * @param null|class-string|object $context
      */
     function DITag(string $tag, $argsOrContext = null, $context = null): ?object
+    {
+        return $this->tag($tag, $argsOrContext, $context);
+    }
+
+    /**
+     * @param non-empty-string $tag
+     * @param null|class-string|object|mixed[] $argsOrContext array is args else context
+     * @param null|class-string|object $context
+     */
+    function tag(string $tag, $argsOrContext = null, $context = null): ?object
     {
         [$context, $args] = $this->defineArgsContext($argsOrContext, $context);
         return $this->mapInstance->getByTag($tag, $context, $args);
