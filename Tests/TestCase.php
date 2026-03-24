@@ -26,14 +26,14 @@ class TestCase extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Without default make object
+     * если обьекта нет возвращаем null, по дефолту мы используем метод "... ?? make(...);"
      * @template T of object
      * @param class-string<T> $dependence
      * @param null|class-string|object|mixed[] $argsOrContext array is args else context
      * @param null|class-string|object $context
-     * @return T
+     * @return ?T
      */
-    static function DI(string $dependence, $argsOrContext = null, $context = null)
+    static function DI(string $dependence, $argsOrContext = null, $context = null): ?object
     {
         $args = [];
         if (\is_array($argsOrContext)) {
