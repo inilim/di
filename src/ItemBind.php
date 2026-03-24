@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Inilim\DI;
 
-use Inilim\DI\DI;
 use Inilim\DI\Bind;
+use Inilim\DI\DI;
+use Inilim\DI\Map;
 
 /**
  * @internal \Inilim\DI
@@ -21,7 +22,7 @@ final class ItemBind
 
     /**
      * @param class-string|non-empty-string $abstractOrTag contract/interface OR realization/implementation OR tag name
-     * @param Bind::KEY_* $type
+     * @param Map::KEY_* $type
      * @param null|class-string|object|\Closure(Bind, mixed[]):object $concrete
      */
     function __construct(
@@ -29,8 +30,8 @@ final class ItemBind
         string $type,
         $concrete = null
     ) {
-        $isTag             = !\in_array($type, [BIND::KEY_CLASS, BIND::KEY_SINGLETON, BIND::KEY_SWAP], true);
-        $this->isSingleton = \in_array($type, [BIND::KEY_SINGLETON, BIND::KEY_SINGLETON_TAG], true);
+        $isTag             = !\in_array($type, [Map::KEY_CLASS, Map::KEY_SINGLETON, Map::KEY_SWAP], true);
+        $this->isSingleton = \in_array($type, [Map::KEY_SINGLETON, Map::KEY_SINGLETON_TAG], true);
 
         if ($isTag) {
             if ($concrete === null) {

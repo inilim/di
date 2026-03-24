@@ -4,6 +4,7 @@ namespace Inilim\Test;
 
 use Inilim\DI\DI;
 use Inilim\DI\Bind;
+use Inilim\DI\Map;
 use Inilim\Dump\Dump;
 
 class TestCase extends \PHPUnit\Framework\TestCase
@@ -15,13 +16,7 @@ class TestCase extends \PHPUnit\Framework\TestCase
 
     static function getMap(): array
     {
-        $b = Bind::self();
-        return (function () {
-            /** @var Bind $this */
-            return $this->map;
-        })
-            ->bindTo($b, $b)
-            ->__invoke();
+        return Map::self()->map;
     }
 
     static function setUpBeforeClass(): void
@@ -47,10 +42,6 @@ class TestCase extends \PHPUnit\Framework\TestCase
             $context = $argsOrContext;
         }
 
-        return (function () {
-            return $this->closureBind->__invoke('getByAbstract', \func_get_args());
-        })
-            ->bindTo(DI::self(), DI::self())
-            ->__invoke($dependence, $context, $args);
+        return Map::self()->getByAbstract($dependence, $context, $args);
     }
 }

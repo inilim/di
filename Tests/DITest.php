@@ -337,8 +337,8 @@ class DITest extends TestCase
         $a = DI(IAbstract::class, $context);
         $b = DI(IAbstract::class, Context::class);
         assertNotEquals(
-            spl_object_hash($a),
-            spl_object_hash($b),
+            \spl_object_hash($a),
+            \spl_object_hash($b),
         );
         assertEquals($args, array_values((array)$a));
 
