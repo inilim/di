@@ -21,8 +21,13 @@ final class Map
         KEY_CLASS_TAG     = 'ct',
         KEY_SINGLETON     = 's',
         KEY_SINGLETON_TAG = 'st',
-        KEY_SWAP          = 'sw',
-        KEY_SWAP_TAG      = 'swt';
+        // KEY_VALUE         = 'v',
+        // KEY_SINGLE_VALUE  = 'sv',
+        // KEY_SWAP_VALUE    = 'swv',
+        KEY_SWAP_CLASS    = 'swc',
+        KEY_SWAP_TAG      = 'swt'
+        // 
+    ;
 
     /** @var array<(self::KEY_*),array<string,ItemBind>> */
     public array $map = [];
@@ -139,7 +144,7 @@ final class Map
     public function getByAbstract(string $abstract, $context = null, array $args = []): ?object
     {
         $item = $this->find([
-            self::KEY_SWAP,
+            self::KEY_SWAP_CLASS,
             self::KEY_CLASS,
             self::KEY_SINGLETON,
         ], Hash::get($abstract, $context));

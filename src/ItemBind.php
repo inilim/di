@@ -30,7 +30,7 @@ final class ItemBind
         string $type,
         $concrete = null
     ) {
-        $isTag             = !\in_array($type, [Map::KEY_CLASS, Map::KEY_SINGLETON, Map::KEY_SWAP], true);
+        $isTag             = !\in_array($type, [Map::KEY_CLASS, Map::KEY_SINGLETON, Map::KEY_SWAP_CLASS], true);
         $this->isSingleton = \in_array($type, [Map::KEY_SINGLETON, Map::KEY_SINGLETON_TAG], true);
 
         if ($isTag) {

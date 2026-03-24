@@ -177,7 +177,7 @@ final class Bind
      */
     function swap(string $target, $swap, $context = null)
     {
-        $this->mapInstance->bindOrThrow(Map::KEY_SWAP, $target, $swap, $context);
+        $this->mapInstance->bindOrThrow(Map::KEY_SWAP_CLASS, $target, $swap, $context);
         return $this;
     }
 

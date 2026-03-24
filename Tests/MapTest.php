@@ -142,7 +142,7 @@ class MapTest extends TestCase
         Bind::self()->class(Concrete::class);
         Bind::self()->swap(Concrete::class, Concrete2::class);
         assertCount(1, self::getMap()[Map::KEY_CLASS]);
-        assertCount(1, self::getMap()[Map::KEY_SWAP]);
+        assertCount(1, self::getMap()[Map::KEY_SWAP_CLASS]);
         assertCount(2, self::getMap());
     }
 
