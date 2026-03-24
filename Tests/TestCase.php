@@ -8,22 +8,25 @@ use Inilim\Dump\Dump;
 
 class TestCase extends \PHPUnit\Framework\TestCase
 {
-    static ?\ReflectionProperty $refProp = null;
-
     static function clearBindMap(): void
     {
-        self::$refProp->setValue(Bind::self(), []);
+        Bind::self()->clear();
     }
 
-    static function getMap()
+    static function getMap(): array
     {
-        return self::$refProp->getValue(Bind::self());
+        $b = Bind::self();
+        return (function () {
+            /** @var Bind $this */
+            return $this->map;
+        })
+            ->bindTo($b, $b)
+            ->__invoke();
     }
 
     static function setUpBeforeClass(): void
     {
         Dump::init();
-        self::$refProp ??= new \ReflectionProperty(Bind::self(), 'map');
         self::clearBindMap();
     }
 

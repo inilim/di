@@ -423,4 +423,51 @@ class DITest extends TestCase
         $c = DI(IAbstract::class, Context::class);
         assertNotEquals($args, array_values((array)$c));
     }
+
+    function test_nested_bind_tag()
+    {
+        self::clearBindMap();
+
+        $bind = Bind::self();
+
+        $bind->singletonTag('name1', static function () {
+            return new \stdClass;
+        })
+            ->singletonTag('name2', static function ($di) {
+                return $di->DITag('name1');
+            })
+            ->singletonTag('name3', static function ($di) {
+                return $di->DITag('name2');
+            })
+            // 
+        ;
+
+        $di = DI::self();
+
+        $obj  = $di->DITag('name1');
+        $obj2 = $di->DITag('name2');
+        $obj3 = $di->DITag('name3');
+
+        $this->assertSame(\spl_object_hash($obj), \spl_object_hash($obj2));
+        $this->assertSame(\spl_object_hash($obj), \spl_object_hash($obj3));
+        $this->assertSame(\spl_object_hash($obj2), \spl_object_hash($obj3));
+    }
+
+    function test_clear_map()
+    {
+        self::clearBindMap();
+
+        $bind = Bind::self();
+        $bind->class(Concrete::class);
+
+        $map = self::getMap();
+
+        $this->assertSame(1, \count($map));
+
+        $bind->clear();
+
+        $map = self::getMap();
+
+        $this->assertSame(0, \count($map));
+    }
 }

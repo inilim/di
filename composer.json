@@ -30,7 +30,7 @@
   "require-dev": {
     "phpstan/phpstan": "@stable",
     "inilim/dump": "dev-main",
-    "phpunit/phpunit": "^11.5"
+    "phpunit/phpunit": "^9.6"
   },
   "scripts": {
     "tests": [
@@ -39,5 +39,10 @@
     "stan": [
       "php vendor/bin/phpstan analyze"
     ]
+  },
+  "config": {
+    "platform": {
+      "php": "7.4"
+    }
   }
 }

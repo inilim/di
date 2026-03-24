@@ -30,6 +30,12 @@ final class Bind
     /** @var array<(self::KEY_*),array<string,ItemBind>> */
     protected array $map = [];
 
+    function clear(): self
+    {
+        $this->map = [];
+        return $this;
+    }
+
     // ---------------------------------------------
     // Class
     // ---------------------------------------------

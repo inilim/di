@@ -23,8 +23,9 @@ final class DI
     {
         $bind = Bind::self();
 
-        $this->closureBind = (function (string $method, array $args = []) {
-             /** @phpstan-ignore method.dynamicName */
+        $this->closureBind = (function (string $method, array $args) {
+            /** @var Bind $this */
+            /** @phpstan-ignore method.dynamicName */
             return $this->$method(...$args);
         })->bindTo($bind, $bind);
     }
