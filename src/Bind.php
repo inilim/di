@@ -174,6 +174,7 @@ final class Bind
     // ------------------------------------------------------------------
 
     /**
+     * @deprecated use Bind::classSingletonTag
      * @param non-empty-string $tag
      * @param class-string|object|\Closure(DI $di, mixed[] $args):object $concrete
      * @param null|class-string|class-string[] $context
@@ -191,7 +192,32 @@ final class Bind
      * @param null|class-string|class-string[] $context
      * @return self
      */
+    function classSingletonTag(string $tag, $concrete, $context = null)
+    {
+        $this->mapInstance->bindOverwrite(Map::T_CLASS_SINGLE_TAG, $tag, $concrete, $context);
+        return $this;
+    }
+
+    /**
+     * @deprecated use Bind::classSingletonTagIf
+     * @param non-empty-string $tag
+     * @param class-string|object|\Closure(DI $di, mixed[] $args):object $concrete
+     * @param null|class-string|class-string[] $context
+     * @return self
+     */
     function singletonTagIf(string $tag, $concrete, $context = null)
+    {
+        $this->mapInstance->bindIf(Map::T_CLASS_SINGLE_TAG, $tag, $concrete, $context);
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $tag
+     * @param class-string|object|\Closure(DI $di, mixed[] $args):object $concrete
+     * @param null|class-string|class-string[] $context
+     * @return self
+     */
+    function classSingletonTagIf(string $tag, $concrete, $context = null)
     {
         $this->mapInstance->bindIf(Map::T_CLASS_SINGLE_TAG, $tag, $concrete, $context);
         return $this;
