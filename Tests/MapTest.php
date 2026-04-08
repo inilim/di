@@ -1,11 +1,10 @@
 <?php
 
 use Inilim\DI\Bind;
-use Inilim\DI\DI;
 use Inilim\DI\Map;
+use Inilim\DI\Swap;
 use Inilim\Test\Other\Concrete2;
 use Inilim\Test\Other\Concrete;
-use Inilim\Test\Other\Context;
 use Inilim\Test\Other\IAbstract;
 use Inilim\Test\TestCase;
 
@@ -43,14 +42,14 @@ class MapTest extends TestCase
 
     function test_map4()
     {
-        Bind::self()->singleton(Concrete::class);
+        Bind::self()->classSingleton(Concrete::class);
         assertCount(1, self::getMap()[Map::T_CLASS_SINGLE]);
         assertCount(1, self::getMap());
     }
 
     function test_map5()
     {
-        Bind::self()->singletonIf(Concrete::class);
+        Bind::self()->classSingletonIf(Concrete::class);
         assertCount(1, self::getMap()[Map::T_CLASS_SINGLE]);
         assertCount(1, self::getMap());
     }
@@ -88,16 +87,16 @@ class MapTest extends TestCase
 
     function test_map10()
     {
-        Bind::self()->singleton(Concrete::class);
-        Bind::self()->singletonIf(Concrete::class);
+        Bind::self()->classSingleton(Concrete::class);
+        Bind::self()->classSingletonIf(Concrete::class);
         assertCount(1, self::getMap()[Map::T_CLASS_SINGLE]);
         assertCount(1, self::getMap());
     }
 
     function test_map11()
     {
-        Bind::self()->singleton(Concrete::class);
-        Bind::self()->singletonIf(Concrete::class);
+        Bind::self()->classSingleton(Concrete::class);
+        Bind::self()->classSingletonIf(Concrete::class);
         Bind::self()->singletonTag('tag', Concrete::class);
         assertCount(1, self::getMap()[Map::T_CLASS_SINGLE]);
         assertCount(1, self::getMap()[Map::T_CLASS_SINGLE_TAG]);
@@ -106,8 +105,8 @@ class MapTest extends TestCase
 
     function test_map13()
     {
-        Bind::self()->singleton(Concrete::class);
-        Bind::self()->singletonIf(Concrete::class);
+        Bind::self()->classSingleton(Concrete::class);
+        Bind::self()->classSingletonIf(Concrete::class);
         Bind::self()->singletonTag('tag', Concrete::class);
         Bind::self()->singletonTagIf('tag', Concrete::class);
         assertCount(1, self::getMap()[Map::T_CLASS_SINGLE]);
@@ -139,7 +138,7 @@ class MapTest extends TestCase
     function test_map15()
     {
         Bind::self()->class(Concrete::class);
-        Bind::self()->swap(Concrete::class, Concrete2::class);
+        Swap::self()->class(Concrete::class, Concrete2::class);
         assertCount(1, self::getMap()[Map::T_CLASS]);
         assertCount(1, self::getMap()[Map::T_CLASS_SWAP]);
         assertCount(2, self::getMap());
@@ -148,7 +147,7 @@ class MapTest extends TestCase
     function test_map16()
     {
         Bind::self()->classTag('tag', Concrete::class);
-        Bind::self()->swapTag('tag', Concrete2::class);
+        Swap::self()->classTag('tag', Concrete2::class);
         assertCount(1, self::getMap()[Map::T_CLASS_TAG]);
         assertCount(1, self::getMap()[Map::T_CLASS_TAG_SWAP]);
         assertCount(2, self::getMap());

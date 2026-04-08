@@ -2,8 +2,8 @@
 
 use Inilim\DI\DI;
 use Inilim\DI\Bind;
+use Inilim\DI\Swap;
 use Inilim\Test\Other\Context;
-use Inilim\Test\Other\Concrete;
 use Inilim\Test\Other\ConcreteSingleton;
 use Inilim\Test\Other\ConcreteSwap;
 use Inilim\Test\TestCase;
@@ -16,7 +16,7 @@ class DISingletonTagSwapTest extends TestCase
         self::clearBindMap();
 
         Bind::self()->singletonTag($name, ConcreteSingleton::class);
-        Bind::self()->swapTag($name, ConcreteSwap::class);
+        Swap::self()->classTag($name, ConcreteSwap::class);
 
         $this->assertInstanceOf(ConcreteSwap::class, DITag($name));
         $this->assertEquals(
@@ -35,7 +35,7 @@ class DISingletonTagSwapTest extends TestCase
         Bind::self()->singletonTag($name, static function () {
             return new ConcreteSingleton;
         });
-        Bind::self()->swapTag($name, static function () {
+        Swap::self()->classTag($name, static function () {
             return new ConcreteSwap;
         });
 
@@ -56,7 +56,7 @@ class DISingletonTagSwapTest extends TestCase
         Bind::self()->singletonTag($name, static function () {
             return new ConcreteSingleton;
         });
-        Bind::self()->swapTag($name, new ConcreteSwap);
+        Swap::self()->classTag($name, new ConcreteSwap);
 
         $this->assertInstanceOf(ConcreteSwap::class, DITag($name));
         $this->assertEquals(

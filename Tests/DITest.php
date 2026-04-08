@@ -5,8 +5,6 @@ use Inilim\DI\Bind;
 use Inilim\Test\TestCase;
 use Inilim\Test\Other\Context;
 use Inilim\Test\Other\Concrete;
-use Inilim\Test\Other\Concrete2;
-
 use Inilim\Test\Other\IAbstract;
 
 use function PHPUnit\Framework\assertEquals;

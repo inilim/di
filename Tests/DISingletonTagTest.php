@@ -3,9 +3,7 @@
 use Inilim\DI\DI;
 use Inilim\DI\Bind;
 use Inilim\Test\Other\Context;
-use Inilim\Test\Other\Concrete;
 use Inilim\Test\Other\ConcreteSingleton;
-use Inilim\Test\Other\ConcreteSwap;
 use Inilim\Test\TestCase;
 
 class DISingletonTagTest extends TestCase

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Inilim\DI;
 
 use Inilim\DI\DI;
+use Inilim\DI\Map;
+use Inilim\DI\Swap;
 use Inilim\Singleton\SimpleSingleton;
 
 /**
@@ -87,10 +89,11 @@ final class Bind
     }
 
     // ------------------------------------------------------------------
-    // Singleton
+    // Singleton class
     // ------------------------------------------------------------------
 
     /**
+     * @deprecated use Bind::classSingleton
      * @param class-string $abstract contract/interface OR realization/implementation
      * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
      * @param null|class-string|class-string[] $context
@@ -103,6 +106,19 @@ final class Bind
     }
 
     /**
+     * @param class-string $abstract contract/interface OR realization/implementation
+     * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
+     * @param null|class-string|class-string[] $context
+     * @return self
+     */
+    function classSingleton(string $abstract, $concrete = null, $context = null)
+    {
+        $this->mapInstance->bindOverwrite(Map::T_CLASS_SINGLE, $abstract, $concrete, $context);
+        return $this;
+    }
+
+    /**
+     * @deprecated use Bind::classSingletonList
      * @param class-string[] $abstract contract/interface OR realization/implementation
      * @return self
      */
@@ -116,12 +132,38 @@ final class Bind
     }
 
     /**
+     * @param class-string[] $abstract contract/interface OR realization/implementation
+     * @return self
+     */
+    function classSingletonList(array $abstract)
+    {
+        $map = $this->mapInstance;
+        foreach ($abstract as $item) {
+            $map->bindOverwrite(Map::T_CLASS_SINGLE, $item, null, null);
+        }
+        return $this;
+    }
+
+    /**
+     * @deprecated use Bind::classSingletonIf
      * @param class-string $abstract contract/interface OR realization/implementation
      * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
      * @param null|class-string|class-string[] $context
      * @return self
      */
     function singletonIf(string $abstract, $concrete = null, $context = null)
+    {
+        $this->mapInstance->bindIf(Map::T_CLASS_SINGLE, $abstract, $concrete, $context);
+        return $this;
+    }
+
+    /**
+     * @param class-string $abstract contract/interface OR realization/implementation
+     * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
+     * @param null|class-string|class-string[] $context
+     * @return self
+     */
+    function classSingletonIf(string $abstract, $concrete = null, $context = null)
     {
         $this->mapInstance->bindIf(Map::T_CLASS_SINGLE, $abstract, $concrete, $context);
         return $this;
@@ -156,10 +198,67 @@ final class Bind
     }
 
     // ------------------------------------------------------------------
+    // value
+    // ------------------------------------------------------------------
+
+    /**
+     * @param non-empty-string $tag
+     * @param mixed|\Closure(DI $di, mixed[] $args):mixed $concrete
+     * @param null|class-string|class-string[] $context
+     * @return self
+     */
+    function value(string $tag, $concrete, $context = null)
+    {
+        $this->mapInstance->bindOverwrite(Map::T_VALUE_TAG, $tag, $concrete, $context);
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $tag
+     * @param mixed|\Closure(DI $di, mixed[] $args):mixed $concrete
+     * @param null|class-string|class-string[] $context
+     * @return self
+     */
+    function valueIf(string $tag, $concrete, $context = null)
+    {
+        $this->mapInstance->bindIf(Map::T_VALUE_TAG, $tag, $concrete, $context);
+        return $this;
+    }
+
+    // ------------------------------------------------------------------
+    // single value
+    // ------------------------------------------------------------------
+
+    /**
+     * @param non-empty-string $tag
+     * @param mixed|\Closure(DI $di, mixed[] $args):mixed $concrete
+     * @param null|class-string|class-string[] $context
+     * @return self
+     */
+    function valueSingle(string $tag, $concrete, $context = null)
+    {
+        $this->mapInstance->bindOverwrite(Map::T_VALUE_SINGLE_TAG, $tag, $concrete, $context);
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $tag
+     * @param mixed|\Closure(DI $di, mixed[] $args):mixed $concrete
+     * @param null|class-string|class-string[] $context
+     * @return self
+     */
+    function valueSingleIf(string $tag, $concrete, $context = null)
+    {
+        $this->mapInstance->bindIf(Map::T_VALUE_SINGLE_TAG, $tag, $concrete, $context);
+        return $this;
+    }
+
+    // ------------------------------------------------------------------
     // Swap
     // ------------------------------------------------------------------
 
     /**
+     * @deprecated use Swap::class
      * @param class-string $target contract/interface OR realization/implementation
      * @param class-string|object|\Closure(DI $di, mixed[] $args): object $swap
      * @param null|class-string|class-string[] $context
@@ -167,11 +266,12 @@ final class Bind
      */
     function swap(string $target, $swap, $context = null)
     {
-        $this->mapInstance->bindOverwrite(Map::T_CLASS_SWAP, $target, $swap, $context);
+        Swap::self()->class($target, $swap, $context);
         return $this;
     }
 
     /**
+     * @deprecated use Swap::classTag
      * @param non-empty-string $target tag
      * @param class-string|object|\Closure(DI $di, mixed[] $args): object $swap
      * @param null|class-string|class-string[] $context
@@ -179,19 +279,7 @@ final class Bind
      */
     function swapTag(string $target, $swap, $context = null)
     {
-        $this->mapInstance->bindOverwrite(Map::T_CLASS_TAG_SWAP, $target, $swap, $context);
-        return $this;
-    }
-
-    /**
-     * @param non-empty-string $target tag
-     * @param mixed $swap
-     * @param null|class-string|class-string[] $context
-     * @return self
-     */
-    function swapVal(string $target, $swap, $context = null)
-    {
-        $this->mapInstance->bindOverwrite(Map::T_VALUE_TAG_SWAP, $target, $swap, $context);
+        Swap::self()->classTag($target, $swap, $context);
         return $this;
     }
 }
