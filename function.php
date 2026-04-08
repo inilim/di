@@ -16,7 +16,7 @@ if (!\function_exists('DI')) {
         if ($o === null) {
             $o = DI::self();
         }
-        return $o->DI($dependence, $argsOrContext, $context);
+        return $o->class($dependence, $argsOrContext, $context);
     }
 }
 
@@ -33,5 +33,23 @@ if (!\function_exists('DITag')) {
             $o = DI::self();
         }
         return $o->tag($tag, $argsOrContext, $context);
+    }
+}
+
+if (!\function_exists('DIVal')) {
+    /**
+     * primitive
+     * @param non-empty-string $tag
+     * @param null|class-string|object|mixed[] $argsOrContext array is args else context
+     * @param null|class-string|object $context
+     * @return mixed
+     */
+    function DIVal(string $tag, $argsOrContext = null, $context = null)
+    {
+        static $o = null;
+        if ($o === null) {
+            $o = DI::self();
+        }
+        return $o->value($tag, $argsOrContext, $context);
     }
 }

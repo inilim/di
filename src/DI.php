@@ -22,6 +22,7 @@ final class DI
     }
 
     /**
+     * @deprecated use DI::class()
      * @template T of object
      * @param class-string<T> $dependence
      * @param null|class-string|object|mixed[] $argsOrContext array is args else context
@@ -31,7 +32,32 @@ final class DI
     function DI(string $dependence, $argsOrContext = null, $context = null): object
     {
         [$context, $args] = $this->defineArgsContext($argsOrContext, $context);
-        return $this->mapInstance->getByAbstract($dependence, $context, $args) ?? $this->make($dependence, $args);
+        return $this->mapInstance->getClassByAbstract($dependence, $context, $args) ?? $this->make($dependence, $args);
+    }
+
+    /**
+     * @template T of object
+     * @param class-string<T> $dependence
+     * @param null|class-string|object|mixed[] $argsOrContext array is args else context
+     * @param null|class-string|object $context
+     * @return T
+     */
+    function class(string $dependence, $argsOrContext = null, $context = null): object
+    {
+        [$context, $args] = $this->defineArgsContext($argsOrContext, $context);
+        return $this->mapInstance->getClassByAbstract($dependence, $context, $args) ?? $this->make($dependence, $args);
+    }
+
+    /**
+     * @param non-empty-string $tag
+     * @param null|class-string|object|mixed[] $argsOrContext array is args else context
+     * @param null|class-string|object $context
+     * @return mixed
+     */
+    function value(string $tag, $argsOrContext = null, $context = null)
+    {
+        [$context, $args] = $this->defineArgsContext($argsOrContext, $context);
+        return $this->mapInstance->getValueByTag($tag, $context, $args);
     }
 
     /**
@@ -42,7 +68,7 @@ final class DI
     function tag(string $tag, $argsOrContext = null, $context = null): ?object
     {
         [$context, $args] = $this->defineArgsContext($argsOrContext, $context);
-        return $this->mapInstance->getByTag($tag, $context, $args);
+        return $this->mapInstance->getClassByTag($tag, $context, $args);
     }
 
     /**

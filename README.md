@@ -47,7 +47,7 @@ $bind->singleton(Service::class);
 
 // Binding using closure
 $bind->class(Service::class, function($di, $args) {
-    return new Service($di->DI(Dependency::class));
+    return new Service($di->class(Dependency::class));
 });
 
 // Binding with context
@@ -212,7 +212,7 @@ $bind->singleton(Service::class);
 
 // Привязка с использованием замыкания
 $bind->class(Service::class, function($di, $args) {
-    return new Service($di->DI(Dependency::class));
+    return new Service($di->class(Dependency::class));
 });
 
 // Привязка с контекстом

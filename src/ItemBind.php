@@ -13,79 +13,107 @@ use Inilim\DI\Map;
  */
 final class ItemBind
 {
-    /**
-     * @var null|class-string|object|\Closure(Bind, mixed[]):object
-     */
+    /** @var mixed */
     protected $concrete;
-    protected ?object $resolvedObject = null;
-    protected bool $isSingleton;
+    /** @var mixed */
+    protected $resolvedConcrete;
+    protected int $status = 0;
+    protected const
+        SINGLE   =  1 << 0,
+        TAG      =  1 << 1,
+        SWAP     =  1 << 2,
+        _CLASS   =  1 << 3,
+        VALUE    =  1 << 4,
+        RESOLVED =  1 << 5
+        // 
+    ;
 
     /**
      * @param class-string|non-empty-string $abstractOrTag contract/interface OR realization/implementation OR tag name
-     * @param Map::KEY_* $type
-     * @param null|class-string|object|\Closure(Bind, mixed[]):object $concrete
+     * @param Map::T_* $type
+     * @param mixed $concrete
      */
     function __construct(
         string $abstractOrTag,
-        string $type,
+        int $type,
         $concrete = null
     ) {
-        $isTag             = !\in_array($type, [Map::KEY_CLASS, Map::KEY_SINGLETON, Map::KEY_SWAP_CLASS], true);
-        $this->isSingleton = \in_array($type, [Map::KEY_SINGLETON, Map::KEY_SINGLETON_TAG], true);
+        $status = 0;
+        $status |= Map::IS_SINGLE & $type ? self::SINGLE : 0;
+        $status |= Map::IS_TAG & $type ? self::TAG : 0;
+        $status |= Map::IS_SWAP & $type ? self::SWAP : 0;
+        $status |= Map::IS_CLASS & $type ? self::_CLASS : 0;
+        $status |= Map::IS_VALUE & $type ? self::VALUE : 0;
+        $this->status = $status;
 
-        if ($isTag) {
-            if ($concrete === null) {
-                throw new \InvalidArgumentException('Tag bind not found concrete');
-            }
+        if ($status & self::TAG) {
             $this->concrete = $concrete;
-        } else {
+        } elseif ($status & self::_CLASS) {
             // @phpstan-ignore-next-line
             $abstractOrTag = \ltrim($abstractOrTag, '\\');
             // @phpstan-ignore-next-line
             $this->concrete = $concrete ?? $abstractOrTag;
+        } else {
+            $this->concrete = $concrete;
         }
     }
 
     /**
      * @param mixed[] $args
+     * @return mixed
      */
-    function resolveAndGetConcrete(array $args): object
+    function resolveAndGet(array $args)
     {
-        if ($this->resolvedObject !== null) {
-            return $this->resolvedObject;
+        if ($this->status & self::RESOLVED) {
+            return $this->resolvedConcrete;
         }
 
-        if ($this->isSingleton) {
+        if ($this->status & self::SINGLE) {
             // @phpstan-ignore-next-line
-            $this->resolvedObject = $this->resolve($this->concrete, $args);
-            // Обнуляем concrete так как он не нужен в типе sigleton, обьект уже создан
-            $this->concrete       = null;
-            return $this->resolvedObject;
+            $this->resolvedConcrete = $this->resolve($this->concrete, $args);
+            // Обнуляем concrete так как он не нужен в типе sigleton, обьект или примитив уже реализован
+            $this->concrete = null;
+            $this->status |= self::RESOLVED;
+            return $this->resolvedConcrete;
         } else {
+            // реализуем всегда если это не single и это closure
             // @phpstan-ignore-next-line
             return $this->resolve($this->concrete, $args);
         }
     }
 
     /**
-     * @template ARG of mixed
-     * @param class-string|object|\Closure(DI $di, ARG[] $args):object $concrete
-     * @param ARG[] $args
+     * @param mixed $concrete
+     * @param mixed[] $args
+     * @return mixed
      */
-    protected function resolve($concrete, array $args): object
+    protected function resolve($concrete, array $args)
     {
-        if (\is_string($concrete)) {
-            return new $concrete(...$args);
-        }
-
-        if ($concrete instanceof \Closure) {
-            $obj = $concrete->__invoke(DI::self(), $args);
-            if (\is_object($obj)) {
-                return $obj;
+        if ($this->status & self::_CLASS) {
+            /** @var class-string|object|\Closure(DI $di, mixed[] $args):object $concrete */
+            if (\is_string($concrete)) {
+                return new $concrete(...$args);
             }
-            throw new \LogicException('$concrete must return object');
-        }
 
-        return $concrete;
+            if ($concrete instanceof \Closure) {
+                $obj = $concrete(DI::self(), $args);
+                if (\is_object($obj)) {
+                    return $obj;
+                }
+                throw new \LogicException('$concrete callback must return object');
+            }
+
+            return $concrete;
+        }
+        // 
+        elseif ($this->status & self::VALUE) {
+            if ($concrete instanceof \Closure) {
+                return $concrete(DI::self(), $args);
+            }
+            if ($args !== []) {
+                throw new \LogicException('TODO');
+            }
+            return $concrete;
+        }
     }
 }

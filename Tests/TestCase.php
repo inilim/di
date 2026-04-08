@@ -42,6 +42,6 @@ class TestCase extends \PHPUnit\Framework\TestCase
             $context = $argsOrContext;
         }
 
-        return Map::self()->getByAbstract($dependence, $context, $args);
+        return Map::self()->getClassByAbstract($dependence, $context, $args);
     }
 }

@@ -17,59 +17,34 @@ final class Map
     use SimpleSingleton;
 
     const
-        KEY_CLASS         = 'c',
-        KEY_CLASS_TAG     = 'ct',
-        KEY_SINGLETON     = 's',
-        KEY_SINGLETON_TAG = 'st',
-        // KEY_VALUE         = 'v',
-        // KEY_SINGLE_VALUE  = 'sv',
-        // KEY_SWAP_VALUE    = 'swv',
-        KEY_SWAP_CLASS    = 'swc',
-        KEY_SWAP_TAG      = 'swt'
+        T_CLASS            = 1 << 0,  // 1
+        T_CLASS_TAG        = 1 << 1,  // 2
+        T_CLASS_SINGLE     = 1 << 2,  // 4
+        T_CLASS_SINGLE_TAG = 1 << 3,  // 8
+        T_VALUE_TAG        = 1 << 4,  // 16
+        T_VALUE_SINGLE_TAG = 1 << 5,  // 32
+        T_VALUE_TAG_SWAP   = 1 << 6,  // 64
+        T_CLASS_SWAP       = 1 << 7,  // 128
+        T_CLASS_TAG_SWAP   = 1 << 8,  // 256
+        // statuses
+        IS_TAG = self::T_VALUE_TAG | self::T_CLASS_TAG | self::T_CLASS_SINGLE_TAG | self::T_VALUE_SINGLE_TAG | self::T_VALUE_TAG_SWAP | self::T_CLASS_TAG_SWAP,
+        IS_SINGLE = self::T_CLASS_SINGLE | self::T_CLASS_SINGLE_TAG | self::T_VALUE_SINGLE_TAG,
+        IS_SWAP = self::T_CLASS_SWAP | self::T_CLASS_TAG_SWAP | self::T_VALUE_TAG_SWAP,
+        IS_CLASS = self::T_CLASS | self::T_CLASS_TAG | self::T_CLASS_SINGLE | self::T_CLASS_SINGLE_TAG | self::T_CLASS_SWAP | self::T_CLASS_TAG_SWAP,
+        IS_VALUE = self::T_VALUE_TAG | self::T_VALUE_SINGLE_TAG | self::T_VALUE_TAG_SWAP
         // 
     ;
 
-    /** @var array<(self::KEY_*),array<string,ItemBind>> */
+    /** @var array<(self::T_*),array<string,ItemBind>> */
     public array $map = [];
 
     /**
-     * @param self::KEY_* $type
-     * @param class-string|non-empty-string $target
-     * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
-     * @param null|class-string|class-string[] $context
-     * @param bool $isIf
-     * @param bool $allowConcreteAnyObject
-     */
-    public function bindOrThrow(
-        string $type,
-        string $target,
-        $concrete,
-        $context                     = null,
-        bool $isIf                   = false,
-        bool $allowConcreteAnyObject = true
-    ): void {
-        if (
-            ($allowConcreteAnyObject && \is_object($concrete))
-            ||
-            $this->checkTypeConcrete($concrete)
-        ) {
-            $isIf
-                ? $this->bindIf($type, $target, $concrete, $context)
-                : $this->bind($type, $target, $concrete, $context);
-
-            return;
-        }
-
-        throw new \InvalidArgumentException;
-    }
-
-    /**
-     * @param (self::KEY_*)|non-empty-list<(self::KEY_*)> $type
+     * @param non-empty-list<(self::T_*)> $type
      * @param non-empty-string $hash
      */
-    public function find($type, string $hash): ?ItemBind
+    public function find(array $type, string $hash): ?ItemBind
     {
-        foreach ((array)$type as $t) {
+        foreach ($type as $t) {
             $r = $this->map[$t][$hash] ?? null;
             if ($r !== null) {
                 return $r;
@@ -79,20 +54,20 @@ final class Map
     }
 
     /**
-     * @param self::KEY_* $type
+     * @param self::T_* $type
      * @param class-string|non-empty-string $abstractOrTag
-     * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
+     * @param null|class-string|object|\Closure(DI $di, mixed[] $args): mixed $concreteOrValue
      * @param null|class-string|class-string[] $context
      */
-    public function bind(
-        string $type,
+    public function bindOverwrite(
+        int $type,
         string $abstractOrTag,
-        $concrete = null,
+        $concreteOrValue = null,
         $context = null
     ): void {
         $this->map[$type] ??= [];
 
-        $item  = new ItemBind($abstractOrTag, $type, $concrete);
+        $item  = new ItemBind($abstractOrTag, $type, $concreteOrValue);
         foreach (
             (\is_array($context) ? $context : [$context]) as $c
         ) {
@@ -101,15 +76,15 @@ final class Map
     }
 
     /**
-     * @param self::KEY_* $type
+     * @param self::T_* $type
      * @param class-string|non-empty-string $abstractOrTag
-     * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
+     * @param null|class-string|object|\Closure(DI $di, mixed[] $args): mixed $concreteOrValue
      * @param null|class-string|class-string[] $context
      */
     public function bindIf(
-        string $type,
+        int $type,
         string $abstractOrTag,
-        $concrete = null,
+        $concreteOrValue = null,
         $context = null
     ): void {
         $contextFiltered = [];
@@ -123,17 +98,8 @@ final class Map
 
         if ($contextFiltered) {
             // @phpstan-ignore-next-line
-            $this->bind($type, $abstractOrTag, $concrete, $contextFiltered);
+            $this->bindOverwrite($type, $abstractOrTag, $concreteOrValue, $contextFiltered);
         }
-    }
-
-    /**
-     * @param mixed $value
-     * @phpstan-assert-if-true null|string|\Closure $value
-     */
-    public function checkTypeConcrete($value): bool
-    {
-        return $value === null || \is_string($value) || $value instanceof \Closure;
     }
 
     /**
@@ -141,16 +107,16 @@ final class Map
      * @param null|class-string|object $context
      * @param mixed[] $args
      */
-    public function getByAbstract(string $abstract, $context = null, array $args = []): ?object
+    public function getClassByAbstract(string $abstract, $context = null, array $args = []): ?object
     {
         $item = $this->find([
-            self::KEY_SWAP_CLASS,
-            self::KEY_CLASS,
-            self::KEY_SINGLETON,
+            self::T_CLASS_SWAP,
+            self::T_CLASS,
+            self::T_CLASS_SINGLE,
         ], Hash::get($abstract, $context));
 
         return $item
-            ? $item->resolveAndGetConcrete($args)
+            ? $item->resolveAndGet($args)
             : null;
     }
 
@@ -159,35 +125,34 @@ final class Map
      * @param null|class-string|object $context
      * @param mixed[] $args
      */
-    public function getByTag(string $tag, $context = null, array $args = []): ?object
+    public function getClassByTag(string $tag, $context = null, array $args = []): ?object
     {
         $item = $this->find([
-            self::KEY_SWAP_TAG,
-            self::KEY_CLASS_TAG,
-            self::KEY_SINGLETON_TAG,
+            self::T_CLASS_TAG_SWAP,
+            self::T_CLASS_TAG,
+            self::T_CLASS_SINGLE_TAG,
         ], Hash::get($tag, $context));
 
         return $item
-            ? $item->resolveAndGetConcrete($args)
+            ? $item->resolveAndGet($args)
             : null;
     }
 
     /**
      * @param non-empty-string $tag
      * @param null|class-string|object $context
-     * @param mixed[] $args
      * @return mixed
      */
-    // public function getValueByTag(string $tag, $context = null, array $args = [])
-    // {
-    // $item = $this->find([
-    // self::KEY_SWAP_VALUE,
-    // self::KEY_VALUE,
-    // self::KEY_SINGLE_VALUE,
-    // ], Hash::get($tag, $context));
+    public function getValueByTag(string $tag, $context = null, array $args = [])
+    {
+        $item = $this->find([
+            self::T_VALUE_TAG_SWAP,
+            self::T_VALUE_TAG,
+            self::T_VALUE_SINGLE_TAG,
+        ], Hash::get($tag, $context));
 
-    // return $item
-    // ? $item->resolveAndGetConcrete($args)
-    // : null;
-    // }
+        return $item
+            ? $item->resolveAndGet($args)
+            : null;
+    }
 }

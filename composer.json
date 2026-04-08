@@ -1,48 +1,48 @@
 {
-  "name": "inilim/di",
-  "description": "end-to-end dependency injection",
-  "type": "library",
-  "license": "MIT",
-  "autoload": {
-    "psr-4": {
-      "Inilim\\DI\\": "src/"
+    "name": "inilim/di",
+    "description": "end-to-end dependency injection",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Inilim\\DI\\": "src/"
+        },
+        "files": [
+            "function.php"
+        ]
     },
-    "files": [
-      "function.php"
-    ]
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Inilim\\Test\\": "Tests/"
-    }
-  },
-  "authors": [
-    {
-      "name": "inilim"
-    }
-  ],
-  "require": {
-    "php": ">=7.4",
-    "inilim/singleton": "dev-main"
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true,
-  "require-dev": {
-    "phpstan/phpstan": "@stable",
-    "inilim/dump": "dev-main",
-    "phpunit/phpunit": "^9.6"
-  },
-  "scripts": {
-    "tests": [
-      "php vendor/bin/phpunit tests"
+    "autoload-dev": {
+        "psr-4": {
+            "Inilim\\Test\\": "Tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "inilim"
+        }
     ],
-    "stan": [
-      "php vendor/bin/phpstan analyze"
-    ]
-  },
-  "config": {
-    "platform": {
-      "php": "7.4"
+    "require": {
+        "php": ">=7.4",
+        "inilim/singleton": "dev-main"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require-dev": {
+        "phpstan/phpstan": "@stable",
+        "inilim/dump": "dev-main",
+        "phpunit/phpunit": "^9.6"
+    },
+    "scripts": {
+        "tests": [
+            "php74 vendor/bin/phpunit tests"
+        ],
+        "stan": [
+            "php vendor/bin/phpstan analyze"
+        ]
+    },
+    "config": {
+        "platform": {
+            "php": "7.4"
+        }
     }
-  }
 }
