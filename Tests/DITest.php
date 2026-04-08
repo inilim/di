@@ -15,6 +15,28 @@ use function PHPUnit\Framework\assertNull;
 class DITest extends TestCase
 {
 
+    function test_class_concrete_not_object_2()
+    {
+        $bind = Bind::self();
+        $bind->clear();
+
+        $this->expectException(\Error::class);
+        $bind->class(Concrete::class, 'not-class');
+        \DI(Concrete::class);
+        // \dd($value);
+    }
+
+    function test_class_concrete_not_object()
+    {
+        $bind = Bind::self();
+        $bind->clear();
+
+        $this->expectException(\TypeError::class);
+        $bind->class(Concrete::class, 123123);
+        \DI(Concrete::class);
+        // \dd($value);
+    }
+
     function test_class_if_exception_callback_return_not_object()
     {
         $bind = Bind::self();
