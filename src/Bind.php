@@ -66,7 +66,7 @@ final class Bind
 
     /**
      * @param non-empty-string $tag
-     * @param class-string|\Closure(DI $di, mixed[] $args): object $concrete
+     * @param class-string|\Closure(DI $di, mixed[] $args):object $concrete
      * @param null|class-string|class-string[] $context
      * @return self
      */
@@ -78,7 +78,7 @@ final class Bind
 
     /**
      * @param non-empty-string $tag
-     * @param class-string|\Closure(DI $di, mixed[] $args): object $concrete
+     * @param class-string|\Closure(DI $di, mixed[] $args):object $concrete
      * @param null|class-string|class-string[] $context
      * @return self
      */
@@ -175,11 +175,11 @@ final class Bind
 
     /**
      * @param non-empty-string $tag
-     * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
+     * @param class-string|object|\Closure(DI $di, mixed[] $args):object $concrete
      * @param null|class-string|class-string[] $context
      * @return self
      */
-    function singletonTag(string $tag, $concrete = null, $context = null)
+    function singletonTag(string $tag, $concrete, $context = null)
     {
         $this->mapInstance->bindOverwrite(Map::T_CLASS_SINGLE_TAG, $tag, $concrete, $context);
         return $this;
@@ -187,11 +187,11 @@ final class Bind
 
     /**
      * @param non-empty-string $tag
-     * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
+     * @param class-string|object|\Closure(DI $di, mixed[] $args):object $concrete
      * @param null|class-string|class-string[] $context
      * @return self
      */
-    function singletonTagIf(string $tag, $concrete = null, $context = null)
+    function singletonTagIf(string $tag, $concrete, $context = null)
     {
         $this->mapInstance->bindIf(Map::T_CLASS_SINGLE_TAG, $tag, $concrete, $context);
         return $this;
