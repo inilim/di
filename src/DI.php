@@ -22,20 +22,6 @@ final class DI
     }
 
     /**
-     * @deprecated use DI::class()
-     * @template T of object
-     * @param class-string<T> $dependence
-     * @param null|class-string|object|mixed[] $argsOrContext array is args else context
-     * @param null|class-string|object $context
-     * @return T
-     */
-    function DI(string $dependence, $argsOrContext = null, $context = null): object
-    {
-        [$context, $args] = $this->defineArgsContext($argsOrContext, $context);
-        return $this->mapInstance->getClassByAbstract($dependence, $context, $args) ?? $this->make($dependence, $args);
-    }
-
-    /**
      * @template T of object
      * @param class-string<T> $dependence
      * @param null|class-string|object|mixed[] $argsOrContext array is args else context
@@ -64,12 +50,43 @@ final class DI
      * @param non-empty-string $tag
      * @param null|class-string|object|mixed[] $argsOrContext array is args else context
      * @param null|class-string|object $context
+     * @return mixed
+     */
+    // function valueEnsure(string $tag, $argsOrContext = null, $context = null)
+    // {
+    //     [$context, $args] = $this->defineArgsContext($argsOrContext, $context);
+    //     $value = $this->mapInstance->getValueByTag($tag, $context, $args);
+    //     if () {
+    //         throw new \LogicException();
+    //     }
+    //     return $value;
+    // }
+
+    /**
+     * @param non-empty-string $tag
+     * @param null|class-string|object|mixed[] $argsOrContext array is args else context
+     * @param null|class-string|object $context
      */
     function tag(string $tag, $argsOrContext = null, $context = null): ?object
     {
         [$context, $args] = $this->defineArgsContext($argsOrContext, $context);
         return $this->mapInstance->getClassByTag($tag, $context, $args);
     }
+
+    /**
+     * @param non-empty-string $tag
+     * @param null|class-string|object|mixed[] $argsOrContext array is args else context
+     * @param null|class-string|object $context
+     */
+    // function tagEnsure(string $tag, $argsOrContext = null, $context = null): object
+    // {
+    //     [$context, $args] = $this->defineArgsContext($argsOrContext, $context);
+    //     $object = $this->mapInstance->getClassByTag($tag, $context, $args);
+    //     if ($object === null) {
+    //         throw new \LogicException();
+    //     }
+    //     return $object;
+    // }
 
     /**
      * @deprecated use DI::tag()
@@ -81,6 +98,20 @@ final class DI
     function DITag(string $tag, $argsOrContext = null, $context = null): ?object
     {
         return $this->tag($tag, $argsOrContext, $context);
+    }
+
+    /**
+     * @deprecated use DI::class()
+     * @template T of object
+     * @param class-string<T> $dependence
+     * @param null|class-string|object|mixed[] $argsOrContext array is args else context
+     * @param null|class-string|object $context
+     * @return T
+     */
+    function DI(string $dependence, $argsOrContext = null, $context = null): object
+    {
+        [$context, $args] = $this->defineArgsContext($argsOrContext, $context);
+        return $this->mapInstance->getClassByAbstract($dependence, $context, $args) ?? $this->make($dependence, $args);
     }
 
     /**

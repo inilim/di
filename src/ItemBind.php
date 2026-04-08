@@ -13,11 +13,6 @@ use Inilim\DI\Map;
  */
 final class ItemBind
 {
-    /** @var mixed */
-    protected $concrete;
-    /** @var mixed */
-    protected $resolvedConcrete;
-    protected int $status = 0;
     protected const
         SINGLE   =  1 << 0,
         TAG      =  1 << 1,
@@ -27,6 +22,12 @@ final class ItemBind
         RESOLVED =  1 << 5
         // 
     ;
+
+    /** @var mixed */
+    protected $concrete;
+    /** @var mixed */
+    protected $resolvedConcrete;
+    protected int $status = 0;
 
     /**
      * @param class-string|non-empty-string $abstractOrTag contract/interface OR realization/implementation OR tag name

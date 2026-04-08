@@ -8,6 +8,7 @@ use Inilim\Test\TestCase;
 
 class DITagTest extends TestCase
 {
+
     function test_via_class_string_without_context(): void
     {
         self::clearBindMap();

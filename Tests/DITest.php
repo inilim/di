@@ -14,6 +14,35 @@ use function PHPUnit\Framework\assertNull;
 
 class DITest extends TestCase
 {
+
+    function test_class_if_exception_callback_return_not_object()
+    {
+        $bind = Bind::self();
+        $bind->clear();
+
+        $this->expectException(\LogicException::class);
+
+        $bind->classIf(Concrete::class, static function () {
+            return 1;
+        });
+
+        \DI(Concrete::class);
+    }
+
+    function test_class_exception_callback_return_not_object()
+    {
+        $bind = Bind::self();
+        $bind->clear();
+
+        $this->expectException(\LogicException::class);
+
+        $bind->class(Concrete::class, static function () {
+            return '';
+        });
+
+        \DI(Concrete::class);
+    }
+
     // без контекста без абстрации
     function test_bind_class_string__without_context_and_abstract(): void
     {
@@ -21,10 +50,11 @@ class DITest extends TestCase
         // без аргументов
         // ---------------------------------------------
 
-        self::clearBindMap();
+        $bind = Bind::self();
+        $bind->clear();
 
         $args = [null, null, null, null, null];
-        Bind::self()->class(Concrete::class);
+        $bind->class(Concrete::class);
 
         assertInstanceOf(Concrete::class, DI(Concrete::class));
         assertInstanceOf(Concrete::class, DI(Concrete::class, Context::class));
@@ -40,13 +70,13 @@ class DITest extends TestCase
         // с аргументами
         // ---------------------------------------------
 
-        self::clearBindMap();
+        $bind->clear();
 
         $arg5 = new \stdClass;
         $args = [1000, 'string', 0.2000, [1, 2, 3], $arg5];
 
         // если не биндим, то создаем как make
-        Bind::self()->class(Concrete::class);
+        $bind->class(Concrete::class);
 
         assertInstanceOf(Concrete::class, DI(Concrete::class, $args));
         assertInstanceOf(Concrete::class, DI(Concrete::class, $args, Context::class));
@@ -81,6 +111,7 @@ class DITest extends TestCase
         $c = DI(Concrete::class);
         assertNotEquals($args, array_values((array)$c));
     }
+
     function test_bind_closure__without_context_and_abstract(): void
     {
         // ---------------------------------------------

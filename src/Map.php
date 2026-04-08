@@ -56,18 +56,18 @@ final class Map
     /**
      * @param self::T_* $type
      * @param class-string|non-empty-string $abstractOrTag
-     * @param null|class-string|object|\Closure(DI $di, mixed[] $args): mixed $concreteOrValue
+     * @param mixed $concrete
      * @param null|class-string|class-string[] $context
      */
     public function bindOverwrite(
         int $type,
         string $abstractOrTag,
-        $concreteOrValue = null,
+        $concrete,
         $context = null
     ): void {
         $this->map[$type] ??= [];
 
-        $item  = new ItemBind($abstractOrTag, $type, $concreteOrValue);
+        $item  = new ItemBind($abstractOrTag, $type, $concrete);
         foreach (
             (\is_array($context) ? $context : [$context]) as $c
         ) {
@@ -78,13 +78,13 @@ final class Map
     /**
      * @param self::T_* $type
      * @param class-string|non-empty-string $abstractOrTag
-     * @param null|class-string|object|\Closure(DI $di, mixed[] $args): mixed $concreteOrValue
+     * @param mixed $concrete
      * @param null|class-string|class-string[] $context
      */
     public function bindIf(
         int $type,
         string $abstractOrTag,
-        $concreteOrValue = null,
+        $concrete,
         $context = null
     ): void {
         $contextFiltered = [];
@@ -98,7 +98,7 @@ final class Map
 
         if ($contextFiltered) {
             // @phpstan-ignore-next-line
-            $this->bindOverwrite($type, $abstractOrTag, $concreteOrValue, $contextFiltered);
+            $this->bindOverwrite($type, $abstractOrTag, $concrete, $contextFiltered);
         }
     }
 

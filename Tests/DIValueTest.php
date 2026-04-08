@@ -1,10 +1,43 @@
 <?php
 
 use Inilim\DI\Bind;
+use Inilim\DI\Map;
+use Inilim\Test\Other\Context;
 use Inilim\Test\TestCase;
 
 class DIValueTest extends TestCase
 {
+    function test_without_bind()
+    {
+        $bind = Bind::self();
+        $bind->clear();
+
+        $this->assertSame(null, \DIVal('tag'));
+    }
+
+    function test_context()
+    {
+        $bind = Bind::self();
+        $bind->clear();
+
+        $bind->value('tag', 'foobar', Context::class);
+
+        $this->assertSame(null, \DIVal('tag'));
+        $this->assertSame('foobar', \DIVal('tag', Context::class));
+        $this->assertSame('foobar', \DIVal('tag', [], Context::class));
+    }
+
+    function test_value_with_args()
+    {
+        $bind = Bind::self();
+        $bind->clear();
+
+        $bind->value('tag', 'foobar');
+
+        $this->expectException(\LogicException::class);
+        \DIVal('tag', [1, 2, 3]);
+    }
+
     function test_single_if()
     {
         $bind = Bind::self();
@@ -12,8 +45,7 @@ class DIValueTest extends TestCase
 
         $bind->valueSingleIf('tag', 'foo');
         $bind->valueSingleIf('tag', 'bar');
-        $value1 = \DIVal('tag');
-        $this->assertSame('foo', $value1);
+        $this->assertSame('foo', \DIVal('tag'));
     }
 
     function test_single()
@@ -25,6 +57,9 @@ class DIValueTest extends TestCase
         $bind->valueSingle('tag', static function () use (&$static) {
             return $static;
         });
+
+        $this->assertSame(1, \count(self::getMap()[Map::T_VALUE_SINGLE_TAG]));
+
         $value1 = \DIVal('tag');
         $static = 'bar';
         $value2 = \DIVal('tag');
@@ -96,6 +131,8 @@ class DIValueTest extends TestCase
             ->value('resource', $resource = \fopen('php://temp', 'r+'))
             // 
         ;
+
+        $this->assertSame(9, \count(self::getMap()[Map::T_VALUE_TAG]));
 
         $this->assertSame($string, \DIVal('string'));
         $this->assertSame($int, \DIVal('int'));
