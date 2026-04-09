@@ -11,6 +11,8 @@ use Inilim\Singleton\SimpleSingleton;
 /**
  * @api
  * for tests
+ * 
+ * @phpstan-type T_Bind_Context null|class-string|object|(class-string|object)[]
  */
 final class Swap
 {
@@ -26,7 +28,7 @@ final class Swap
     /**
      * @param class-string $target contract/interface OR realization/implementation
      * @param class-string|object|\Closure(DI $di, mixed[] $args): object $swap
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      * @return self
      */
     function class(string $target, $swap, $context = null)
@@ -38,7 +40,7 @@ final class Swap
     /**
      * @param non-empty-string $target tag
      * @param class-string|object|\Closure(DI $di, mixed[] $args): object $swap
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      * @return self
      */
     function classTag(string $target, $swap, $context = null)
@@ -50,7 +52,7 @@ final class Swap
     /**
      * @param non-empty-string $target tag
      * @param mixed $swap
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      * @return self
      */
     function value(string $target, $swap, $context = null)

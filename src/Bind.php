@@ -12,6 +12,8 @@ use Inilim\Singleton\SimpleSingleton;
 /**
  * @api
  * 
+ * @phpstan-type T_Bind_Context null|class-string|object|(class-string|object)[]
+ * 
  * @phpstan-type TypeConcreteAll class-string|object|\Closure(DI $di, mixed[] $args): object
  * @phpstan-type TypeConcrete class-string|\Closure(DI $di, mixed[] $args): object
  */
@@ -39,7 +41,7 @@ final class Bind
     /**
      * @param class-string $abstract contract/interface OR realization/implementation
      * @param null|class-string|\Closure(DI,mixed[]):object $concrete
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      * @return self
      */
     function class(string $abstract, $concrete = null, $context = null)
@@ -51,7 +53,7 @@ final class Bind
     /**
      * @param class-string $abstract contract/interface OR realization/implementation
      * @param null|class-string|\Closure(DI $di, mixed[] $args): object $concrete
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      * @return self
      */
     function classIf(string $abstract, $concrete = null, $context = null)
@@ -67,7 +69,7 @@ final class Bind
     /**
      * @param non-empty-string $tag
      * @param class-string|\Closure(DI $di, mixed[] $args):object $concrete
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      * @return self
      */
     function classTagIf(string $tag, $concrete, $context = null)
@@ -79,7 +81,7 @@ final class Bind
     /**
      * @param non-empty-string $tag
      * @param class-string|\Closure(DI $di, mixed[] $args):object $concrete
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      * @return self
      */
     function classTag(string $tag, $concrete, $context = null)
@@ -96,7 +98,7 @@ final class Bind
      * @deprecated use Bind::classSingleton
      * @param class-string $abstract contract/interface OR realization/implementation
      * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      * @return self
      */
     function singleton(string $abstract, $concrete = null, $context = null)
@@ -108,7 +110,7 @@ final class Bind
     /**
      * @param class-string $abstract contract/interface OR realization/implementation
      * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      * @return self
      */
     function classSingleton(string $abstract, $concrete = null, $context = null)
@@ -148,7 +150,7 @@ final class Bind
      * @deprecated use Bind::classSingletonIf
      * @param class-string $abstract contract/interface OR realization/implementation
      * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      * @return self
      */
     function singletonIf(string $abstract, $concrete = null, $context = null)
@@ -160,7 +162,7 @@ final class Bind
     /**
      * @param class-string $abstract contract/interface OR realization/implementation
      * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      * @return self
      */
     function classSingletonIf(string $abstract, $concrete = null, $context = null)
@@ -177,7 +179,7 @@ final class Bind
      * @deprecated use Bind::classSingletonTag
      * @param non-empty-string $tag
      * @param class-string|object|\Closure(DI $di, mixed[] $args):object $concrete
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      * @return self
      */
     function singletonTag(string $tag, $concrete, $context = null)
@@ -189,7 +191,7 @@ final class Bind
     /**
      * @param non-empty-string $tag
      * @param class-string|object|\Closure(DI $di, mixed[] $args):object $concrete
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      * @return self
      */
     function classSingletonTag(string $tag, $concrete, $context = null)
@@ -202,7 +204,7 @@ final class Bind
      * @deprecated use Bind::classSingletonTagIf
      * @param non-empty-string $tag
      * @param class-string|object|\Closure(DI $di, mixed[] $args):object $concrete
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      * @return self
      */
     function singletonTagIf(string $tag, $concrete, $context = null)
@@ -214,7 +216,7 @@ final class Bind
     /**
      * @param non-empty-string $tag
      * @param class-string|object|\Closure(DI $di, mixed[] $args):object $concrete
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      * @return self
      */
     function classSingletonTagIf(string $tag, $concrete, $context = null)
@@ -230,7 +232,7 @@ final class Bind
     /**
      * @param non-empty-string $tag
      * @param mixed|\Closure(DI $di, mixed[] $args):mixed $concrete
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      * @return self
      */
     function value(string $tag, $concrete, $context = null)
@@ -242,7 +244,7 @@ final class Bind
     /**
      * @param non-empty-string $tag
      * @param mixed|\Closure(DI $di, mixed[] $args):mixed $concrete
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      * @return self
      */
     function valueIf(string $tag, $concrete, $context = null)
@@ -258,7 +260,7 @@ final class Bind
     /**
      * @param non-empty-string $tag
      * @param mixed|\Closure(DI $di, mixed[] $args):mixed $concrete
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      * @return self
      */
     function valueSingle(string $tag, $concrete, $context = null)
@@ -270,7 +272,7 @@ final class Bind
     /**
      * @param non-empty-string $tag
      * @param mixed|\Closure(DI $di, mixed[] $args):mixed $concrete
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      * @return self
      */
     function valueSingleIf(string $tag, $concrete, $context = null)
@@ -287,7 +289,7 @@ final class Bind
      * @deprecated use Swap::class
      * @param class-string $target contract/interface OR realization/implementation
      * @param class-string|object|\Closure(DI $di, mixed[] $args): object $swap
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      * @return self
      */
     function swap(string $target, $swap, $context = null)
@@ -300,7 +302,7 @@ final class Bind
      * @deprecated use Swap::classTag
      * @param non-empty-string $target tag
      * @param class-string|object|\Closure(DI $di, mixed[] $args): object $swap
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      * @return self
      */
     function swapTag(string $target, $swap, $context = null)

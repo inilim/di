@@ -11,6 +11,8 @@ use Inilim\Singleton\SimpleSingleton;
 
 /**
  * @internal \Inilim\DI
+ * 
+ * @phpstan-type T_Bind_Context null|class-string|object|(class-string|object)[]
  */
 final class Map
 {
@@ -57,7 +59,7 @@ final class Map
      * @param self::T_* $type
      * @param class-string|non-empty-string $abstractOrTag
      * @param mixed $concrete
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      */
     public function bindOverwrite(
         int $type,
@@ -79,7 +81,7 @@ final class Map
      * @param self::T_* $type
      * @param class-string|non-empty-string $abstractOrTag
      * @param mixed $concrete
-     * @param null|class-string|class-string[] $context
+     * @param T_Bind_Context $context
      */
     public function bindIf(
         int $type,
