@@ -18,10 +18,10 @@ final class Hash
     {
         $t = \gettype($context);
         if ($t === 'object') {
-            /** @var object $context */
+            /** @phpstan-ignore argument.type */
             $context = \get_class($context);
         } elseif ($t === 'string') {
-            /** @var string $context */
+            /** @phpstan-ignore argument.type */
             $context = \ltrim($context, '\\');
         } else {
             $context = '';

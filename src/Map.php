@@ -88,24 +88,34 @@ final class Map
         $context = null
     ): void {
         $contextFiltered = [];
+        $hasNull = false;
         foreach (
             (\is_array($context) ? $context : [$context]) as $c
         ) {
             if (!isset($this->map[$type][Hash::get($abstractOrTag, $c)])) {
-                $contextFiltered[] = $c;
+                if ($c === null) {
+                    $hasNull = true;
+                } else {
+                    $contextFiltered[] = $c;
+                }
             }
         }
 
         if ($contextFiltered) {
-            // @phpstan-ignore-next-line
             $this->bindOverwrite($type, $abstractOrTag, $concrete, $contextFiltered);
+        }
+
+        if ($hasNull) {
+            $this->bindOverwrite($type, $abstractOrTag, $concrete, null);
         }
     }
 
     /**
-     * @param class-string $abstract contract/interface OR realization/implementation
+     * @template T of object
+     * @param class-string<T> $abstract contract/interface OR realization/implementation
      * @param null|class-string|object $context
      * @param mixed[] $args
+     * @return ?T
      */
     public function getClassByAbstract(string $abstract, $context = null, array $args = []): ?object
     {
@@ -141,6 +151,7 @@ final class Map
     /**
      * @param non-empty-string $tag
      * @param null|class-string|object $context
+     * @param mixed[] $args
      * @return mixed
      */
     public function getValueByTag(string $tag, $context = null, array $args = [])

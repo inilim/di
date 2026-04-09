@@ -56,7 +56,7 @@ final class Bind
      */
     function classIf(string $abstract, $concrete = null, $context = null)
     {
-        $this->mapInstance->bindIf(Map::T_CLASS, $abstract, $concrete, $context, true);
+        $this->mapInstance->bindIf(Map::T_CLASS, $abstract, $concrete, $context);
         return $this;
     }
 

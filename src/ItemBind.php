@@ -37,7 +37,7 @@ final class ItemBind
     function __construct(
         string $abstractOrTag,
         int $type,
-        $concrete = null
+        $concrete
     ) {
         $status = 0;
         $status |= Map::IS_SINGLE & $type ? self::SINGLE : 0;
@@ -50,9 +50,7 @@ final class ItemBind
         if ($status & self::TAG) {
             $this->concrete = $concrete;
         } elseif ($status & self::_CLASS) {
-            // @phpstan-ignore-next-line
             $abstractOrTag = \ltrim($abstractOrTag, '\\');
-            // @phpstan-ignore-next-line
             $this->concrete = $concrete ?? $abstractOrTag;
         } else {
             $this->concrete = $concrete;
@@ -70,7 +68,6 @@ final class ItemBind
         }
 
         if ($this->status & self::SINGLE) {
-            // @phpstan-ignore-next-line
             $this->resolvedConcrete = $this->resolve($this->concrete, $args);
             // Обнуляем concrete так как он не нужен в типе sigleton, обьект или примитив уже реализован
             $this->concrete = null;
@@ -78,7 +75,6 @@ final class ItemBind
             return $this->resolvedConcrete;
         } else {
             // реализуем всегда если это не single и это closure
-            // @phpstan-ignore-next-line
             return $this->resolve($this->concrete, $args);
         }
     }

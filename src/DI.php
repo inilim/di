@@ -128,7 +128,7 @@ final class DI
     /**
      * @param null|class-string|object|mixed[] $argsOrContext array is args else context
      * @param null|class-string|object $context
-     * @return array{0:null|class-string|object,1:null|mixed[]}
+     * @return array{0:null|class-string|object,1:mixed[]}
      */
     protected function defineArgsContext($argsOrContext = null, $context = null): array
     {
