@@ -105,15 +105,6 @@ final class Swap
         return null;
     }
 
-    protected function isTypeSwap(ItemBind $item): bool
-    {
-        return (function (): bool {
-            /** @var ItemBind $this */
-            return (bool)($this->status & $this::SWAP);
-        })
-            ->bindTo($item, $item)();
-    }
-
     /**
      * @psalm-assert ItemBind $item
      * @phpstan-assert ItemBind $item
@@ -122,7 +113,7 @@ final class Swap
     {
         if ($item === null) {
             throw new \RuntimeException('Попытка заменить зависимость которой нету');
-        } elseif ($this->isTypeSwap($item)) {
+        } elseif ($item->status & $item::SWAP) {
             throw new \RuntimeException('Попытка заменить зависимость которая уже заменена');
         }
     }
