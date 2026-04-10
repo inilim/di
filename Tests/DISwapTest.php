@@ -17,6 +17,8 @@ class DISwapTest extends TestCase
     {
         self::clearBindMap();
 
+        Bind::self()
+            ->class(Concrete::class);
         $this->expectException(\RuntimeException::class);
         Swap::self()
             ->class(Concrete::class, ConcreteSwap::class)

@@ -10,10 +10,12 @@ class DIValueSwapTest extends TestCase
     {
         self::clearBindMap();
 
+        Bind::self()
+            ->value('tag', 'foobar');
         $this->expectException(\RuntimeException::class);
         Swap::self()
-            ->value('tag', 'foobar')
-            ->value('tag', 'foobar');
+            ->value('tag', 'barfoo')
+            ->value('tag', 'barfoo');
     }
 
     function test_swap_target_undefined()

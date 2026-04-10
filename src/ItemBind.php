@@ -42,7 +42,7 @@ final class ItemBind
         $status = 0;
         $status |= Map::IS_SINGLE & $type ? self::SINGLE : 0;
         $status |= Map::IS_TAG & $type ? self::TAG : 0;
-        // $status |= Map::IS_SWAP & $type ? self::SWAP : 0;
+        $status |= Map::IS_SWAP & $type ? self::SWAP : 0;
         $status |= Map::IS_CLASS & $type ? self::_CLASS : 0;
         $status |= Map::IS_VALUE & $type ? self::VALUE : 0;
         $this->status = $status;

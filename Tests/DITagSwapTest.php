@@ -14,6 +14,8 @@ class DITagSwapTest extends TestCase
     {
         self::clearBindMap();
 
+        Bind::self()
+            ->classTag('tag', Concrete::class);
         $this->expectException(\RuntimeException::class);
         Swap::self()
             ->classTag('tag', ConcreteSwap::class)
