@@ -10,6 +10,24 @@ use Inilim\Test\TestCase;
 
 class DITagSwapTest extends TestCase
 {
+    function test_swap_target_double()
+    {
+        self::clearBindMap();
+
+        $this->expectException(\RuntimeException::class);
+        Swap::self()
+            ->classTag('tag', ConcreteSwap::class)
+            ->classTag('tag', ConcreteSwap::class);
+    }
+
+    function test_swap_target_undefined()
+    {
+        self::clearBindMap();
+
+        $this->expectException(\RuntimeException::class);
+        Swap::self()->classTag('tag', ConcreteSwap::class);
+    }
+
     function test_without_context(): void
     {
         $name = 'tagName';

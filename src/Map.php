@@ -41,15 +41,15 @@ final class Map
     public array $map = [];
 
     /**
-     * @param non-empty-list<(self::T_*)> $type
+     * @param non-empty-list<(self::T_*)> $types
      * @param non-empty-string $hash
      */
-    public function find(array $type, string $hash): ?ItemBind
+    public function find(array $types, string $hash): ?ItemBind
     {
-        foreach ($type as $t) {
-            $r = $this->map[$t][$hash] ?? null;
-            if ($r !== null) {
-                return $r;
+        foreach ($types as $type) {
+            $item = $this->map[$type][$hash] ?? null;
+            if ($item !== null) {
+                return $item;
             }
         }
         return null;

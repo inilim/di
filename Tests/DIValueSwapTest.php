@@ -6,6 +6,24 @@ use Inilim\Test\TestCase;
 
 class DIValueSwapTest extends TestCase
 {
+    function test_swap_target_double()
+    {
+        self::clearBindMap();
+
+        $this->expectException(\RuntimeException::class);
+        Swap::self()
+            ->value('tag', 'foobar')
+            ->value('tag', 'foobar');
+    }
+
+    function test_swap_target_undefined()
+    {
+        self::clearBindMap();
+
+        $this->expectException(\RuntimeException::class);
+        Swap::self()->value('tag', 'foobar');
+    }
+
     function test_single_if()
     {
         $bind = Bind::self();

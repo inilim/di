@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Inilim\DI;
 
 use Inilim\DI\DI;
+use Inilim\DI\Hash;
 use Inilim\DI\Map;
 use Inilim\Singleton\SimpleSingleton;
 
@@ -33,6 +34,14 @@ final class Swap
      */
     function class(string $target, $swap, $context = null)
     {
+        $item = $this->find([
+            Map::T_CLASS_SWAP,
+            Map::T_CLASS,
+            Map::T_CLASS_SINGLE,
+        ], $target, $context);
+
+        $this->checkItem($item);
+
         $this->mapInstance->bindOverwrite(Map::T_CLASS_SWAP, $target, $swap, $context);
         return $this;
     }
@@ -45,6 +54,14 @@ final class Swap
      */
     function classTag(string $target, $swap, $context = null)
     {
+        $item = $this->find([
+            Map::T_CLASS_TAG_SWAP,
+            Map::T_CLASS_TAG,
+            Map::T_CLASS_SINGLE_TAG,
+        ], $target, $context);
+
+        $this->checkItem($item);
+
         $this->mapInstance->bindOverwrite(Map::T_CLASS_TAG_SWAP, $target, $swap, $context);
         return $this;
     }
@@ -57,7 +74,56 @@ final class Swap
      */
     function value(string $target, $swap, $context = null)
     {
+        $item = $this->find([
+            Map::T_VALUE_TAG_SWAP,
+            Map::T_VALUE_TAG,
+            Map::T_VALUE_SINGLE_TAG,
+        ], $target, $context);
+
+        $this->checkItem($item);
+
         $this->mapInstance->bindOverwrite(Map::T_VALUE_TAG_SWAP, $target, $swap, $context);
         return $this;
+    }
+
+    /**
+     * @param non-empty-list<(Map::T_*)> $types
+     * @param non-empty-string|class-string $target
+     * @param T_Bind_Context $context
+     */
+    protected function find(array $types, string $target, $context = null): ?ItemBind
+    {
+        $map = $this->mapInstance;
+        foreach (
+            \is_array($context) ? $context : [$context] as $c
+        ) {
+            $item = $map->find($types, Hash::get($target, $c));
+            if ($item !== null) {
+                return $item;
+            }
+        }
+        return null;
+    }
+
+    protected function isTypeSwap(ItemBind $item): bool
+    {
+        return (function (): bool {
+            /** @var ItemBind $this */
+            return (bool)($this->status & $this::SWAP);
+        })
+            ->bindTo($item, $item)();
+    }
+
+    /**
+     * @psalm-assert ItemBind $item
+     * @phpstan-assert ItemBind $item
+     */
+    protected function checkItem(?ItemBind $item): void
+    {
+        if ($item === null) {
+            throw new \RuntimeException('Попытка заменить зависимость которой нету');
+        } elseif ($this->isTypeSwap($item)) {
+            throw new \RuntimeException('Попытка заменить зависимость которая уже заменена');
+        }
     }
 }

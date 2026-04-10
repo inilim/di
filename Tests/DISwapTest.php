@@ -13,6 +13,24 @@ use Inilim\Test\TestCase;
  */
 class DISwapTest extends TestCase
 {
+    function test_swap_target_double()
+    {
+        self::clearBindMap();
+
+        $this->expectException(\RuntimeException::class);
+        Swap::self()
+            ->class(Concrete::class, ConcreteSwap::class)
+            ->class(Concrete::class, ConcreteSwap::class);
+    }
+
+    function test_swap_target_undefined()
+    {
+        self::clearBindMap();
+
+        $this->expectException(\RuntimeException::class);
+        Swap::self()->class(Concrete::class, ConcreteSwap::class);
+    }
+
     function test_class_string__without_context_abstract()
     {
         self::clearBindMap();

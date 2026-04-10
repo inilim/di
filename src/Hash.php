@@ -10,7 +10,7 @@ namespace Inilim\DI;
 final class Hash
 {
     /**
-     * @param non-empty-string $string
+     * @param non-empty-string $string tag|abstract|implements|interface
      * @param null|class-string|object $context
      * @return non-empty-string
      */
