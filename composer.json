@@ -23,10 +23,8 @@
     ],
     "require": {
         "php": ">=7.4",
-        "inilim/singleton": "dev-main"
+        "inilim/singleton": "^0.0.05062026"
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
     "require-dev": {
         "phpstan/phpstan": "@stable",
         "inilim/dump": "dev-main",
