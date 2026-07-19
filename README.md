@@ -64,10 +64,10 @@ $bind->classTag('my_tag', MyService::class);
 $bind->classTagIf('optional_tag', OptionalService::class);
 
 // Registering a list of singletons
-$bind->singletonList([
+$bind->classSingletonList([
     ServiceA::class,
     ServiceB::class,
-    ServiceC::class
+    ServiceC::class,
 ]);
 
 // Conditional singleton registration
@@ -229,10 +229,10 @@ $bind->classTag('my_tag', MyService::class);
 $bind->classTagIf('optional_tag', OptionalService::class);
 
 // Регистрация списка синглтонов
-$bind->singletonList([
+$bind->classSingletonList([
     ServiceA::class,
     ServiceB::class,
-    ServiceC::class
+    ServiceC::class,
 ]);
 
 // Условная регистрация синглтона

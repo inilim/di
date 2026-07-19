@@ -121,10 +121,10 @@ final class Bind
 
     /**
      * @deprecated use Bind::classSingletonList
-     * @param class-string[] $abstract contract/interface OR realization/implementation
+     * @param iterable<class-string> $abstract contract/interface OR realization/implementation
      * @return self
      */
-    function singletonList(array $abstract)
+    function singletonList(iterable $abstract)
     {
         $map = $this->mapInstance;
         foreach ($abstract as $item) {
@@ -134,10 +134,10 @@ final class Bind
     }
 
     /**
-     * @param class-string[] $abstract contract/interface OR realization/implementation
+     * @param iterable<class-string> $abstract contract/interface OR realization/implementation
      * @return self
      */
-    function classSingletonList(array $abstract)
+    function classSingletonList(iterable $abstract)
     {
         $map = $this->mapInstance;
         foreach ($abstract as $item) {
