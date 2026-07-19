@@ -14,7 +14,7 @@ This library provides a powerful and flexible dependency injection system for PH
 ## Installation
 
 ```bash
-composer require inilim/di:dev-main
+composer require inilim/di
 ```
 
 ## Quick Start
@@ -181,7 +181,7 @@ MIT License
 ## Установка
 
 ```bash
-composer require inilim/di:dev-main
+composer require inilim/di
 ```
 
 ## Быстрый старт
