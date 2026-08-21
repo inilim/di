@@ -26,9 +26,9 @@
         "inilim/singleton": "^0.0.05062026"
     },
     "require-dev": {
-        "phpstan/phpstan": "@stable",
         "inilim/dump": "dev-main",
-        "phpunit/phpunit": "^9.6"
+        "phpunit/phpunit": "^9.6",
+        "phpstan/phpstan": "^2.2"
     },
     "scripts": {
         "tests": [

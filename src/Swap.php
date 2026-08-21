@@ -30,9 +30,8 @@ final class Swap
      * @param class-string $target contract/interface OR realization/implementation
      * @param class-string|object|\Closure(DI $di, mixed[] $args): object $swap
      * @param T_Bind_Context $context
-     * @return self
      */
-    function class(string $target, $swap, $context = null)
+    function class(string $target, $swap, $context = null): self
     {
         $item = $this->find([
             Map::T_CLASS_SWAP,
@@ -50,9 +49,8 @@ final class Swap
      * @param non-empty-string $target tag
      * @param class-string|object|\Closure(DI $di, mixed[] $args): object $swap
      * @param T_Bind_Context $context
-     * @return self
      */
-    function classTag(string $target, $swap, $context = null)
+    function classTag(string $target, $swap, $context = null): self
     {
         $item = $this->find([
             Map::T_CLASS_TAG_SWAP,
@@ -70,9 +68,8 @@ final class Swap
      * @param non-empty-string $target tag
      * @param mixed $swap
      * @param T_Bind_Context $context
-     * @return self
      */
-    function value(string $target, $swap, $context = null)
+    function value(string $target, $swap, $context = null): self
     {
         $item = $this->find([
             Map::T_VALUE_TAG_SWAP,
@@ -83,6 +80,52 @@ final class Swap
         $this->checkItem($item);
 
         $this->mapInstance->bindOverwrite(Map::T_VALUE_TAG_SWAP, $target, $swap, $context);
+        return $this;
+    }
+
+    // ------------------------------------------------------------------
+    // Remove
+    // ------------------------------------------------------------------
+
+    /**
+     * @param class-string $target contract/interface OR realization/implementation
+     * @param T_Bind_Context $context
+     */
+    function removeClass(string $target, $context = null): self
+    {
+        $this->remove(Map::T_CLASS_SWAP, $target, $context);
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $target tag
+     * @param T_Bind_Context $context
+     */
+    function removeClassTag(string $target, $context = null): self
+    {
+        $this->remove(Map::T_CLASS_TAG_SWAP, $target, $context);
+        return $this;
+    }
+
+    /**
+     * @param non-empty-string $target tag
+     * @param T_Bind_Context $context
+     */
+    function removeValue(string $target, $context = null): self
+    {
+        $this->remove(Map::T_VALUE_TAG_SWAP, $target, $context);
+        return $this;
+    }
+
+    /**
+     */
+    function clearAll(): self
+    {
+        unset(
+            $this->mapInstance->map[Map::T_CLASS_SWAP],
+            $this->mapInstance->map[Map::T_CLASS_TAG_SWAP],
+            $this->mapInstance->map[Map::T_VALUE_TAG_SWAP]
+        );
         return $this;
     }
 
@@ -103,6 +146,21 @@ final class Swap
             }
         }
         return null;
+    }
+
+    /**
+     * @param Map::T_* $type
+     * @param non-empty-string|class-string $target
+     * @param T_Bind_Context $context
+     */
+    protected function remove(int $type, string $target, $context = null): void
+    {
+        $map = $this->mapInstance;
+        foreach (
+            \is_array($context) ? $context : [$context] as $c
+        ) {
+            $map->remove($type, Hash::get($target, $c));
+        }
     }
 
     /**

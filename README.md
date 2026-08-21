@@ -105,12 +105,40 @@ $conn1 === $conn2 // true
 ## Implementation Swapping (Swap)
 
 ```php
+use Inilim\DI\Swap;
+
 // Implementation replacement
-$bind->swap(OriginalClass::class, MockClass::class);
+Swap::self()->class(OriginalClass::class, MockClass::class);
 
 // Tag-based replacement
-$bind->swapTag('original_tag', 'mock_tag');
+Swap::self()->classTag('original_tag', MockClass::class);
+
+// Value replacement
+Swap::self()->value('original_tag', 'mocked_value');
 ```
+
+### Removing Swaps
+
+Swaps can be removed when they are no longer needed, for example between tests. The original bindings are restored automatically (including already resolved singletons).
+
+```php
+// Remove the swap of a specific dependency
+Swap::self()->removeClass(OriginalClass::class);
+
+// Remove the swap of a tagged dependency
+Swap::self()->removeClassTag('original_tag');
+
+// Remove the swap of a value
+Swap::self()->removeValue('original_tag');
+
+// Context-specific removal
+Swap::self()->removeClass(OriginalClass::class, MyContext::class);
+
+// Remove all swaps at once
+Swap::self()->clearAll();
+```
+
+Removing a swap that doesn't exist is a silent no-op, so it's safe to call unconditionally.
 
 ## Testing with Mocks and Swaps
 
@@ -119,6 +147,7 @@ When writing PHPUnit tests, you can use the swap functionality to replace real i
 ```php
 use PHPUnit\Framework\TestCase;
 use Inilim\DI\Bind;
+use Inilim\DI\Swap;
 
 class MyServiceTest extends TestCase
 {
@@ -130,8 +159,7 @@ class MyServiceTest extends TestCase
                        ->willReturn('mocked result');
 
         // Swap the real dependency with the mock
-        $bind = Bind::self();
-        $bind->swap(DependencyInterface::class, $mockDependency);
+        Swap::self()->class(DependencyInterface::class, $mockDependency);
 
         // Now when we create our service, it will use the mock
         $service = \DI(MyService::class);
@@ -141,6 +169,12 @@ class MyServiceTest extends TestCase
         
         // Assertions
         $this->assertEquals('expected result', $result);
+    }
+
+    protected function tearDown(): void
+    {
+        // Remove all swaps after each test
+        Swap::self()->clearAll();
     }
 }
 ```
@@ -270,12 +304,40 @@ $conn1 === $conn2 // true
 ## Замена реализаций (Swap)
 
 ```php
+use Inilim\DI\Swap;
+
 // Замена реализации
-$bind->swap(OriginalClass::class, MockClass::class);
+Swap::self()->class(OriginalClass::class, MockClass::class);
 
 // Замена по тегу
-$bind->swapTag('original_tag', 'mock_tag');
+Swap::self()->classTag('original_tag', MockClass::class);
+
+// Замена значения
+Swap::self()->value('original_tag', 'mocked_value');
 ```
+
+### Снятие подмен
+
+Подмены можно убрать, когда они больше не нужны, например между тестами. Оригинальные привязки восстанавливаются автоматически (включая уже разрешённые синглтоны).
+
+```php
+// Убрать подмену конкретной зависимости
+Swap::self()->removeClass(OriginalClass::class);
+
+// Убрать подмену зависимости по тегу
+Swap::self()->removeClassTag('original_tag');
+
+// Убрать подмену значения
+Swap::self()->removeValue('original_tag');
+
+// Снятие подмены для конкретного контекста
+Swap::self()->removeClass(OriginalClass::class, MyContext::class);
+
+// Убрать все подмены разом
+Swap::self()->clearAll();
+```
+
+Удаление несуществующей подмены — тихий no-op, поэтому вызывать можно безусловно.
 
 ## Контекстная зависимость
 

@@ -42,9 +42,8 @@ final class Bind
      * @param class-string $abstract contract/interface OR realization/implementation
      * @param null|class-string|\Closure(DI,mixed[]):object $concrete
      * @param T_Bind_Context $context
-     * @return self
      */
-    function class(string $abstract, $concrete = null, $context = null)
+    function class(string $abstract, $concrete = null, $context = null): self
     {
         $this->mapInstance->bindOverwrite(Map::T_CLASS, $abstract, $concrete, $context);
         return $this;
@@ -54,9 +53,8 @@ final class Bind
      * @param class-string $abstract contract/interface OR realization/implementation
      * @param null|class-string|\Closure(DI $di, mixed[] $args): object $concrete
      * @param T_Bind_Context $context
-     * @return self
      */
-    function classIf(string $abstract, $concrete = null, $context = null)
+    function classIf(string $abstract, $concrete = null, $context = null): self
     {
         $this->mapInstance->bindIf(Map::T_CLASS, $abstract, $concrete, $context);
         return $this;
@@ -70,9 +68,8 @@ final class Bind
      * @param non-empty-string $tag
      * @param class-string|\Closure(DI $di, mixed[] $args):object $concrete
      * @param T_Bind_Context $context
-     * @return self
      */
-    function classTagIf(string $tag, $concrete, $context = null)
+    function classTagIf(string $tag, $concrete, $context = null): self
     {
         $this->mapInstance->bindIf(Map::T_CLASS_TAG, $tag, $concrete, $context);
         return $this;
@@ -82,9 +79,8 @@ final class Bind
      * @param non-empty-string $tag
      * @param class-string|\Closure(DI $di, mixed[] $args):object $concrete
      * @param T_Bind_Context $context
-     * @return self
      */
-    function classTag(string $tag, $concrete, $context = null)
+    function classTag(string $tag, $concrete, $context = null): self
     {
         $this->mapInstance->bindOverwrite(Map::T_CLASS_TAG, $tag, $concrete, $context);
         return $this;
@@ -99,9 +95,8 @@ final class Bind
      * @param class-string $abstract contract/interface OR realization/implementation
      * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
      * @param T_Bind_Context $context
-     * @return self
      */
-    function singleton(string $abstract, $concrete = null, $context = null)
+    function singleton(string $abstract, $concrete = null, $context = null): self
     {
         $this->mapInstance->bindOverwrite(Map::T_CLASS_SINGLE, $abstract, $concrete, $context);
         return $this;
@@ -111,9 +106,8 @@ final class Bind
      * @param class-string $abstract contract/interface OR realization/implementation
      * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
      * @param T_Bind_Context $context
-     * @return self
      */
-    function classSingleton(string $abstract, $concrete = null, $context = null)
+    function classSingleton(string $abstract, $concrete = null, $context = null): self
     {
         $this->mapInstance->bindOverwrite(Map::T_CLASS_SINGLE, $abstract, $concrete, $context);
         return $this;
@@ -122,9 +116,8 @@ final class Bind
     /**
      * @deprecated use Bind::classSingletonList
      * @param iterable<class-string> $abstract contract/interface OR realization/implementation
-     * @return self
      */
-    function singletonList(iterable $abstract)
+    function singletonList(iterable $abstract): self
     {
         $map = $this->mapInstance;
         foreach ($abstract as $item) {
@@ -135,9 +128,8 @@ final class Bind
 
     /**
      * @param iterable<class-string> $abstract contract/interface OR realization/implementation
-     * @return self
      */
-    function classSingletonList(iterable $abstract)
+    function classSingletonList(iterable $abstract): self
     {
         $map = $this->mapInstance;
         foreach ($abstract as $item) {
@@ -151,9 +143,8 @@ final class Bind
      * @param class-string $abstract contract/interface OR realization/implementation
      * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
      * @param T_Bind_Context $context
-     * @return self
      */
-    function singletonIf(string $abstract, $concrete = null, $context = null)
+    function singletonIf(string $abstract, $concrete = null, $context = null): self
     {
         $this->mapInstance->bindIf(Map::T_CLASS_SINGLE, $abstract, $concrete, $context);
         return $this;
@@ -163,9 +154,8 @@ final class Bind
      * @param class-string $abstract contract/interface OR realization/implementation
      * @param null|class-string|object|\Closure(DI $di, mixed[] $args): object $concrete
      * @param T_Bind_Context $context
-     * @return self
      */
-    function classSingletonIf(string $abstract, $concrete = null, $context = null)
+    function classSingletonIf(string $abstract, $concrete = null, $context = null): self
     {
         $this->mapInstance->bindIf(Map::T_CLASS_SINGLE, $abstract, $concrete, $context);
         return $this;
@@ -180,9 +170,8 @@ final class Bind
      * @param non-empty-string $tag
      * @param class-string|object|\Closure(DI $di, mixed[] $args):object $concrete
      * @param T_Bind_Context $context
-     * @return self
      */
-    function singletonTag(string $tag, $concrete, $context = null)
+    function singletonTag(string $tag, $concrete, $context = null): self
     {
         $this->mapInstance->bindOverwrite(Map::T_CLASS_SINGLE_TAG, $tag, $concrete, $context);
         return $this;
@@ -192,9 +181,8 @@ final class Bind
      * @param non-empty-string $tag
      * @param class-string|object|\Closure(DI $di, mixed[] $args):object $concrete
      * @param T_Bind_Context $context
-     * @return self
      */
-    function classSingletonTag(string $tag, $concrete, $context = null)
+    function classSingletonTag(string $tag, $concrete, $context = null): self
     {
         $this->mapInstance->bindOverwrite(Map::T_CLASS_SINGLE_TAG, $tag, $concrete, $context);
         return $this;
@@ -205,9 +193,8 @@ final class Bind
      * @param non-empty-string $tag
      * @param class-string|object|\Closure(DI $di, mixed[] $args):object $concrete
      * @param T_Bind_Context $context
-     * @return self
      */
-    function singletonTagIf(string $tag, $concrete, $context = null)
+    function singletonTagIf(string $tag, $concrete, $context = null): self
     {
         $this->mapInstance->bindIf(Map::T_CLASS_SINGLE_TAG, $tag, $concrete, $context);
         return $this;
@@ -217,9 +204,8 @@ final class Bind
      * @param non-empty-string $tag
      * @param class-string|object|\Closure(DI $di, mixed[] $args):object $concrete
      * @param T_Bind_Context $context
-     * @return self
      */
-    function classSingletonTagIf(string $tag, $concrete, $context = null)
+    function classSingletonTagIf(string $tag, $concrete, $context = null): self
     {
         $this->mapInstance->bindIf(Map::T_CLASS_SINGLE_TAG, $tag, $concrete, $context);
         return $this;
@@ -233,9 +219,8 @@ final class Bind
      * @param non-empty-string $tag
      * @param mixed|\Closure(DI $di, mixed[] $args):mixed $concrete
      * @param T_Bind_Context $context
-     * @return self
      */
-    function value(string $tag, $concrete, $context = null)
+    function value(string $tag, $concrete, $context = null): self
     {
         $this->mapInstance->bindOverwrite(Map::T_VALUE_TAG, $tag, $concrete, $context);
         return $this;
@@ -245,9 +230,8 @@ final class Bind
      * @param non-empty-string $tag
      * @param mixed|\Closure(DI $di, mixed[] $args):mixed $concrete
      * @param T_Bind_Context $context
-     * @return self
      */
-    function valueIf(string $tag, $concrete, $context = null)
+    function valueIf(string $tag, $concrete, $context = null): self
     {
         $this->mapInstance->bindIf(Map::T_VALUE_TAG, $tag, $concrete, $context);
         return $this;
@@ -261,9 +245,8 @@ final class Bind
      * @param non-empty-string $tag
      * @param mixed|\Closure(DI $di, mixed[] $args):mixed $concrete
      * @param T_Bind_Context $context
-     * @return self
      */
-    function valueSingle(string $tag, $concrete, $context = null)
+    function valueSingle(string $tag, $concrete, $context = null): self
     {
         $this->mapInstance->bindOverwrite(Map::T_VALUE_SINGLE_TAG, $tag, $concrete, $context);
         return $this;
@@ -273,9 +256,8 @@ final class Bind
      * @param non-empty-string $tag
      * @param mixed|\Closure(DI $di, mixed[] $args):mixed $concrete
      * @param T_Bind_Context $context
-     * @return self
      */
-    function valueSingleIf(string $tag, $concrete, $context = null)
+    function valueSingleIf(string $tag, $concrete, $context = null): self
     {
         $this->mapInstance->bindIf(Map::T_VALUE_SINGLE_TAG, $tag, $concrete, $context);
         return $this;
@@ -290,9 +272,8 @@ final class Bind
      * @param class-string $target contract/interface OR realization/implementation
      * @param class-string|object|\Closure(DI $di, mixed[] $args): object $swap
      * @param T_Bind_Context $context
-     * @return self
      */
-    function swap(string $target, $swap, $context = null)
+    function swap(string $target, $swap, $context = null): self
     {
         Swap::self()->class($target, $swap, $context);
         return $this;
@@ -303,9 +284,8 @@ final class Bind
      * @param non-empty-string $target tag
      * @param class-string|object|\Closure(DI $di, mixed[] $args): object $swap
      * @param T_Bind_Context $context
-     * @return self
      */
-    function swapTag(string $target, $swap, $context = null)
+    function swapTag(string $target, $swap, $context = null): self
     {
         Swap::self()->classTag($target, $swap, $context);
         return $this;

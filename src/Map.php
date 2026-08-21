@@ -57,6 +57,15 @@ final class Map
 
     /**
      * @param self::T_* $type
+     * @param non-empty-string $hash
+     */
+    public function remove(int $type, string $hash): void
+    {
+        unset($this->map[$type][$hash]);
+    }
+
+    /**
+     * @param self::T_* $type
      * @param class-string|non-empty-string $abstractOrTag
      * @param mixed $concrete
      * @param T_Bind_Context $context
