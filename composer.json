@@ -23,7 +23,7 @@
     ],
     "require": {
         "php": ">=7.4",
-        "inilim/singleton": "^0.0.05062026"
+        "inilim/singleton": "0.0.* | ^0.1"
     },
     "require-dev": {
         "inilim/dump": "dev-main",

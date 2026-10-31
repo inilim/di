@@ -48,7 +48,7 @@ final class Map
     {
         foreach ($types as $type) {
             $item = $this->map[$type][$hash] ?? null;
-            if ($item !== null) {
+            if (null !== $item) {
                 return $item;
             }
         }
@@ -104,7 +104,7 @@ final class Map
             (\is_array($context) ? $context : [$context]) as $c
         ) {
             if (!isset($this->map[$type][Hash::get($abstractOrTag, $c)])) {
-                if ($c === null) {
+                if (null === $c) {
                     $hasNull = true;
                 } else {
                     $contextFiltered[] = $c;

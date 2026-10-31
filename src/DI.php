@@ -135,7 +135,7 @@ final class DI
         $args = [];
         if (\is_array($argsOrContext)) {
             $args = $argsOrContext;
-        } elseif ($argsOrContext !== null) {
+        } elseif (null !== $argsOrContext) {
             $context = $argsOrContext;
         }
 

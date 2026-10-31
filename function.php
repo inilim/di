@@ -13,7 +13,7 @@ if (!\function_exists('DI')) {
     function DI(string $dependence, $argsOrContext = null, $context = null): object
     {
         static $o = null;
-        if ($o === null) {
+        if (null === $o) {
             $o = DI::self();
         }
         return $o->class($dependence, $argsOrContext, $context);
@@ -29,7 +29,7 @@ if (!\function_exists('DITag')) {
     function DITag(string $tag, $argsOrContext = null, $context = null): ?object
     {
         static $o = null;
-        if ($o === null) {
+        if (null === $o) {
             $o = DI::self();
         }
         return $o->tag($tag, $argsOrContext, $context);
@@ -47,7 +47,7 @@ if (!\function_exists('DIVal')) {
     function DIVal(string $tag, $argsOrContext = null, $context = null)
     {
         static $o = null;
-        if ($o === null) {
+        if (null === $o) {
             $o = DI::self();
         }
         return $o->value($tag, $argsOrContext, $context);

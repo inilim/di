@@ -17,10 +17,10 @@ final class Hash
     static function get(string $string, $context): string
     {
         $t = \gettype($context);
-        if ($t === 'object') {
+        if ('object' === $t) {
             /** @phpstan-ignore argument.type */
             $context = \get_class($context);
-        } elseif ($t === 'string') {
+        } elseif ('string' === $t) {
             /** @phpstan-ignore argument.type */
             $context = \ltrim($context, '\\');
         } else {

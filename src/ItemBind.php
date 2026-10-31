@@ -107,7 +107,7 @@ final class ItemBind
             if ($concrete instanceof \Closure) {
                 return $concrete(DI::self(), $args);
             }
-            if ($args !== []) {
+            if ([] !== $args) {
                 throw new \LogicException('TODO');
             }
             return $concrete;
