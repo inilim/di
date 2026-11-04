@@ -22,7 +22,7 @@ class DITest extends TestCase
 
         $this->expectException(\Error::class);
         $bind->class(Concrete::class, 'not-class');
-        \DI(Concrete::class);
+        \DIClass(Concrete::class);
         // \dd($value);
     }
 
@@ -33,7 +33,7 @@ class DITest extends TestCase
 
         $this->expectException(\TypeError::class);
         $bind->class(Concrete::class, 123123);
-        \DI(Concrete::class);
+        \DIClass(Concrete::class);
         // \dd($value);
     }
 
@@ -48,7 +48,7 @@ class DITest extends TestCase
             return 1;
         });
 
-        \DI(Concrete::class);
+        \DIClass(Concrete::class);
     }
 
     function test_class_exception_callback_return_not_object()
@@ -62,7 +62,7 @@ class DITest extends TestCase
             return '';
         });
 
-        \DI(Concrete::class);
+        \DIClass(Concrete::class);
     }
 
     // без контекста без абстрации

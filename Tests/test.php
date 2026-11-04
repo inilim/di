@@ -24,6 +24,6 @@ final class TestClass
 
     function __construct()
     {
-        $this->dep1 = \DI(Dep1::class);
+        $this->dep1 = \DIClass(Dep1::class);
     }
 }
