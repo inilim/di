@@ -1,4 +1,6 @@
 /vendor
+/.aicoder
+/.sandbox
 /composer.lock
 .htaccess
 .phpunit.result.cache
