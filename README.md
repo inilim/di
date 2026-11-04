@@ -23,13 +23,13 @@ composer require inilim/di
 use Inilim\DI\DI;
 
 // Object creation
-$obj = \DI(MyClass::class);
+$obj = \DIClass(MyClass::class);
 
 // Object creation with arguments
-$obj = \DI(MyClass::class, ['arg1', 'arg2']);
+$obj = \DIClass(MyClass::class, ['arg1', 'arg2']);
 
 // Object creation with context
-$obj = \DI(MyClass::class, null, MyContext::class);
+$obj = \DIClass(MyClass::class, null, MyContext::class);
 ```
 
 ## Dependency Binding
@@ -97,8 +97,8 @@ $logger = \DITag('logger');
 $bind->singleton(DatabaseConnection::class);
 
 // All calls will return the same instance
-$conn1 = \DI(DatabaseConnection::class);
-$conn2 = \DI(DatabaseConnection::class);
+$conn1 = \DIClass(DatabaseConnection::class);
+$conn2 = \DIClass(DatabaseConnection::class);
 $conn1 === $conn2 // true
 ```
 
@@ -162,7 +162,7 @@ class MyServiceTest extends TestCase
         Swap::self()->class(DependencyInterface::class, $mockDependency);
 
         // Now when we create our service, it will use the mock
-        $service = \DI(MyService::class);
+        $service = \DIClass(MyService::class);
         
         // Perform your test
         $result = $service->doSomething();
@@ -222,13 +222,13 @@ composer require inilim/di
 
 ```php
 // Создание объекта
-$obj = \DI(MyClass::class);
+$obj = \DIClass(MyClass::class);
 
 // Создание объекта с аргументами
-$obj = \DI(MyClass::class, ['arg1', 'arg2']);
+$obj = \DIClass(MyClass::class, ['arg1', 'arg2']);
 
 // Создание объекта с контекстом
-$obj = \DI(MyClass::class, null, MyContext::class);
+$obj = \DIClass(MyClass::class, null, MyContext::class);
 ```
 
 ## Привязка зависимостей
@@ -296,8 +296,8 @@ $logger = \DITag('logger');
 $bind->singleton(DatabaseConnection::class);
 
 // Все вызовы будут возвращать один и тот же экземпляр
-$conn1 = \DI(DatabaseConnection::class);
-$conn2 = \DI(DatabaseConnection::class);
+$conn1 = \DIClass(DatabaseConnection::class);
+$conn2 = \DIClass(DatabaseConnection::class);
 $conn1 === $conn2 // true
 ```
 
